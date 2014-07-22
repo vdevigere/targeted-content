@@ -8,10 +8,15 @@ import javax.inject.Named;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+
+import com.viddu.content.resource.ContentResource;
 import com.viddu.content.resource.DashboardResource;
+import com.viddu.content.resource.TagResource;
 import com.viddu.content.tiles.TilesMessageBodyWriter;
 
-@ApplicationPath("/content")
+@ApplicationPath("/target")
 public class App extends Application {
 
     private Set<Class<?>> resources = new LinkedHashSet<>();
@@ -19,6 +24,8 @@ public class App extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         resources.add(DashboardResource.class);
+        resources.add(ContentResource.class);
+        resources.add(TagResource.class);
         resources.add(TilesMessageBodyWriter.class);
         return resources;
     }
@@ -39,5 +46,11 @@ public class App extends Application {
     @Named("Formal")
     public String sayFormal() {
         return "Hello";
+    }
+
+    @Produces
+    public JedisPool getConnection() {
+        JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost", 6379);
+        return pool;
     }
 }
