@@ -33,6 +33,7 @@ public class TilesMessageBodyWriter implements MessageBodyWriter<ModelView> {
 
     @Context
     private HttpServletRequest request;
+
     @Context
     private HttpServletResponse response;
 
@@ -53,15 +54,17 @@ public class TilesMessageBodyWriter implements MessageBodyWriter<ModelView> {
     public void writeTo(ModelView modelView, Class<?> type, Type genericType, Annotation[] annotations,
             MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream)
             throws IOException, WebApplicationException {
-
-        ApplicationContext applicationContext = org.apache.tiles.request.servlet.ServletUtil
+        final ApplicationContext applicationContext = org.apache.tiles.request.servlet.ServletUtil
                 .getApplicationContext(context);
-        TilesContainer container = TilesAccess.getContainer(applicationContext);
 
-        Request tilesRequestResponse = new ServletRequest(applicationContext, new HttpServletRequestWrapper(request),
-                new HttpServletResponseWrapper(response));
+        final TilesContainer container = TilesAccess.getContainer(applicationContext);
+        HttpServletResponse wrappedResponse = new HttpServletResponseWrapper(response);
+        HttpServletRequest wrappedRequest = new HttpServletRequestWrapper(request);
+        for (String key : modelView.getModel().keySet()) {
+            wrappedRequest.setAttribute(key, modelView.getModel().get(key));
+        }
+        Request tilesRequestResponse = new ServletRequest(applicationContext, wrappedRequest, wrappedResponse);
         container.render(modelView.getView(), tilesRequestResponse);
         logger.debug("{}", modelView.getView());
     }
-
 }

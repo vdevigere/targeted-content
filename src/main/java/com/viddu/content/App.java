@@ -8,17 +8,17 @@ import javax.inject.Named;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-import com.viddu.content.resource.CoreResource;
+import com.viddu.content.resource.DashboardResource;
 import com.viddu.content.tiles.TilesMessageBodyWriter;
 
-@ApplicationPath("/target")
+@ApplicationPath("/content")
 public class App extends Application {
 
     private Set<Class<?>> resources = new LinkedHashSet<>();
 
     @Override
     public Set<Class<?>> getClasses() {
-        resources.add(CoreResource.class);
+        resources.add(DashboardResource.class);
         resources.add(TilesMessageBodyWriter.class);
         return resources;
     }
