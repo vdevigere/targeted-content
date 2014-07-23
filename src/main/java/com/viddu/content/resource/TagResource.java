@@ -9,19 +9,20 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import com.viddu.content.redis.TagDAO;
+import com.viddu.content.bo.Content;
+import com.viddu.content.redis.ContentDAO;
 
 @Path("/tag")
 @ApplicationScoped
 public class TagResource {
 
     @Inject
-    TagDAO tagDAO;
+    ContentDAO contentDAO;
 
     @GET
     @Path("/{tagName}")
     @Produces("application/json")
-    public Set<String> getById(@PathParam("tagName") String tagName) {
-        return tagDAO.getTaggedContent(tagName);
+    public Set<Content> getById(@PathParam("tagName") String tagName) {
+        return contentDAO.getContentByTagName(tagName, 1);
     }
 }

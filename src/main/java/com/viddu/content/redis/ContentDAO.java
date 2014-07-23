@@ -2,6 +2,7 @@ package com.viddu.content.redis;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,6 +15,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import com.viddu.content.bo.Content;
+import com.viddu.content.bo.ContentTag;
 import com.viddu.content.bo.ContentType;
 
 public class ContentDAO {
@@ -26,7 +28,7 @@ public class ContentDAO {
         this.pool = pool;
     }
 
-    public Content getContentById(Long id) {
+    public Content getContentById(Long id, Integer depth) {
         String key = "CONTENT::" + id;
         Jedis jedis = pool.getResource();
         try {
@@ -39,7 +41,13 @@ public class ContentDAO {
             } catch (MalformedURLException e) {
                 logger.error("URL is malformed", e);
             }
-            return new Content(id, name, type, url);
+            Content content = new Content(id, name, type, url);
+            // Fetch Tag details.
+            if (depth > 0) {
+                logger.debug("Fetching Tags for Content {}, Depth={}", id, depth);
+                content.setTags(getTagsByContentId(id, depth));
+            }
+            return content;
         } finally {
             if (jedis != null) {
                 jedis.close();
@@ -47,17 +55,59 @@ public class ContentDAO {
         }
     }
 
-    public Set<String> getTagsById(Long id) {
+    public Set<ContentTag> getTagsByContentId(Long id, Integer depth) {
+        depth--;
         String key = "CONTENT::" + id + "::TAGS";
+        Set<ContentTag> contentTags = new LinkedHashSet<ContentTag>();
         Jedis jedis = pool.getResource();
         try {
             Set<String> tags = jedis.smembers(key);
-            return tags;
+            for (String tagName : tags) {
+                ContentTag contentTag = new ContentTag(tagName);
+                // Fetch Content details.
+                if (depth > 0) {
+                    logger.debug("Fetching Content by TagName {}, Depth={}", tagName, depth);
+                    contentTag.setContent(getContentByTagName(tagName, depth));
+                }
+                contentTags.add(contentTag);
+            }
+
+            return contentTags;
         } finally {
             if (jedis != null) {
                 jedis.close();
             }
         }
+    }
 
+    public Set<Content> getContentByTagName(String tagName, Integer depth) {
+        depth--;
+        String key = "TAGS::" + tagName + "::CONTENT";
+        Jedis jedis = pool.getResource();
+        Set<Content> taggedContent = new LinkedHashSet<Content>();
+        try {
+            Set<String> contentIds = jedis.smembers(key);
+            for (String contentId : contentIds) {
+                Long id = Long.parseLong(contentId);
+                taggedContent.add(getContentById(id, depth));
+            }
+            return taggedContent;
+        } finally {
+            if (jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    public Set<String> getTagsById(String tagName) {
+        String key = "TAGS::" + tagName + "::CHILDREN";
+        Jedis jedis = pool.getResource();
+        try {
+            return jedis.smembers(key);
+        } finally {
+            if (jedis != null) {
+                jedis.close();
+            }
+        }
     }
 }
