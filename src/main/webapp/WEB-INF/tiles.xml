@@ -12,4 +12,8 @@
 	<definition name="content.addNew" extends="myapp.basePage">
 		<put-attribute name="body" value="/tiles/addNew.jsp" />
 	</definition>
+
+	<definition name="home" extends="myapp.basePage">
+		<put-attribute name="body" value="/tiles/home.jsp" />
+	</definition>
 </tiles-definitions>
