@@ -5,12 +5,14 @@ import java.util.Set;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viddu.content.resource.ContentResource;
 import com.viddu.content.resource.DashboardResource;
 import com.viddu.content.resource.TagResource;
@@ -24,8 +26,8 @@ public class App extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         resources.add(DashboardResource.class);
-        resources.add(ContentResource.class);
         resources.add(TagResource.class);
+        resources.add(ContentResource.class);
         resources.add(TilesMessageBodyWriter.class);
         return resources;
     }
@@ -49,8 +51,15 @@ public class App extends Application {
     }
 
     @Produces
+    @Singleton
     public JedisPool getConnection() {
         JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost", 6379);
         return pool;
+    }
+
+    @Produces
+    @Singleton
+    public ObjectMapper getMapper() {
+        return new ObjectMapper();
     }
 }

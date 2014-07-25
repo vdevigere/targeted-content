@@ -1,6 +1,7 @@
 package com.viddu.content.resource;
 
-import java.util.Set;
+import java.util.Collection;
+import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -19,46 +20,45 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.viddu.content.bo.Content;
-import com.viddu.content.bo.ContentTag;
-import com.viddu.content.redis.ContentDAO;
+import com.viddu.content.redis.RedisDAO;
 
 @Path("/content")
 @ApplicationScoped
 public class ContentResource {
 
-	@Inject
-	ContentDAO contentDAO;
+    private static final String CONTENT = "CONTENT";
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(ContentResource.class);
+    @Inject
+    RedisDAO redisDAO;
 
-	@GET
-	@Path("/{id}")
-	@Produces("application/json")
-	public Content getById(@PathParam("id") Long id,
-			@DefaultValue("1") @QueryParam("depth") Integer depth) {
-		return contentDAO.getContentById(id, depth);
-	}
+    private static final Logger logger = LoggerFactory.getLogger(ContentResource.class);
 
-	@GET
-	@Path("/{id}/tags")
-	@Produces("application/json")
-	public Set<ContentTag> getAllTags(@PathParam("id") Long id,
-			@DefaultValue("1") @QueryParam("depth") Integer depth) {
-		return contentDAO.getTagsByContentId(id, depth);
-	}
+    @GET
+    @Path("/{id}")
+    @Produces("application/json")
+    public Map<String, ?> getById(@PathParam("id") String contentId,
+            @DefaultValue("0") @QueryParam("depth") Integer depth) {
+        return redisDAO.findContentById(CONTENT, contentId, depth);
+    }
 
-	@POST
-	@Path("/post")
-	@Consumes("application/x-www-form-urlencoded")
-	@Produces("application/json")
-	public String saveContent(@BeanParam Content content,
-			@FormParam("tags") String tags) {
-		logger.debug("Name={}", content.getName());
-		logger.debug("URL={}", content.getUrl());
-		logger.debug("Type={}", content.getType());
-		logger.debug("Tags={}", tags);
-		Long id = null;
-		return "Success";
-	}
+    @GET
+    @Path("/{id}/tags")
+    @Produces("application/json")
+    public Collection<String> getAllTags(@PathParam("id") String contentId,
+            @DefaultValue("0") @QueryParam("depth") Integer depth) {
+        return redisDAO.findTagsById(CONTENT, contentId);
+    }
+
+    @POST
+    @Path("/post")
+    @Consumes("application/x-www-form-urlencoded")
+    @Produces("application/json")
+    public String saveContent(@BeanParam Content content, @FormParam("tags") String tags) {
+        logger.debug("Name={}", content.getName());
+        logger.debug("URL={}", content.getUrl());
+        logger.debug("Type={}", content.getType());
+        logger.debug("Tags={}", tags);
+        Long id = null;
+        return "Success";
+    }
 }

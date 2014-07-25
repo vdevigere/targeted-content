@@ -1,28 +1,31 @@
 package com.viddu.content.resource;
 
-import java.util.Set;
+import java.util.Collection;
+import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
-import com.viddu.content.bo.Content;
-import com.viddu.content.redis.ContentDAO;
+import com.viddu.content.redis.RedisDAO;
 
 @Path("/tag")
 @ApplicationScoped
 public class TagResource {
 
-    @Inject
-    ContentDAO contentDAO;
+    private static final String CONTENT = "CONTENT";
+	@Inject
+    RedisDAO redisDAO;
 
     @GET
     @Path("/{tagName}")
     @Produces("application/json")
-    public Set<Content> getById(@PathParam("tagName") String tagName) {
-        return contentDAO.getContentByTagName(tagName, 1);
+    public Collection<? extends Map<String, ?>> findByTagName(@PathParam("tagName") String tagName, @DefaultValue("0") @QueryParam("depth") Integer depth) {
+        return redisDAO.findByTagName(CONTENT, tagName, depth);
     }
 }
