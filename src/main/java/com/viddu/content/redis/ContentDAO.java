@@ -41,7 +41,8 @@ public class ContentDAO {
             } catch (MalformedURLException e) {
                 logger.error("URL is malformed", e);
             }
-            Content content = new Content(id, name, type, url);
+            Content content = new Content(name, type, url);
+            content.setId(id);
             // Fetch Tag details.
             if (depth > 0) {
                 logger.debug("Fetching Tags for Content {}, Depth={}", id, depth);

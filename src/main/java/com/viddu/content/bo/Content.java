@@ -3,45 +3,59 @@ package com.viddu.content.bo;
 import java.net.URL;
 import java.util.Set;
 
+import javax.ws.rs.FormParam;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name="CONTENT")
+@XmlRootElement(name = "CONTENT")
 public class Content {
-    private final Long id;
-    private final ContentType type;
-    private final URL url;
-    private final String name;
+	private Long id;
 
-    private Set<ContentTag> tags;
-    
-    public Content(Long id, String name, ContentType type, URL url) {
-        this.id = id;
-        this.type = type;
-        this.url = url;
-        this.name = name;
-    }
+	@FormParam("type")
+	private ContentType type;
 
-    public Long getId() {
-        return id;
-    }
+	@FormParam("url")
+	private URL url;
 
-    public ContentType getType() {
-        return type;
-    }
+	@FormParam("name")
+	private String name;
 
-    public URL getUrl() {
-        return url;
-    }
+	private Set<ContentTag> tags;
 
-    public String getName() {
-        return name;
-    }
+	public Content(String name, ContentType type, URL url) {
+		this.type = type;
+		this.url = url;
+		this.name = name;
+	}
 
-    public Set<ContentTag> getTags() {
-        return tags;
-    }
+	public Content() {
 
-    public void setTags(Set<ContentTag> tags) {
-        this.tags = tags;
-    }
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public ContentType getType() {
+		return type;
+	}
+
+	public URL getUrl() {
+		return url;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Set<ContentTag> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<ContentTag> tags) {
+		this.tags = tags;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -60,8 +61,11 @@ public class TilesMessageBodyWriter implements MessageBodyWriter<ModelView> {
         final TilesContainer container = TilesAccess.getContainer(applicationContext);
         HttpServletResponse wrappedResponse = new HttpServletResponseWrapper(response);
         HttpServletRequest wrappedRequest = new HttpServletRequestWrapper(request);
-        for (String key : modelView.getModel().keySet()) {
-            wrappedRequest.setAttribute(key, modelView.getModel().get(key));
+        Map<String, ?> model = modelView.getModel();
+        if (model != null) {
+            for (String key : model.keySet()) {
+                wrappedRequest.setAttribute(key, model.get(key));
+            }
         }
         Request tilesRequestResponse = new ServletRequest(applicationContext, wrappedRequest, wrappedResponse);
         container.render(modelView.getView(), tilesRequestResponse);

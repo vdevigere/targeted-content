@@ -20,7 +20,6 @@ public class ModelView {
     }
 
     public ModelView(String view, Collection<?> model) {
-        super();
         this.view = view;
         Map<String, Object> modelMap = new LinkedHashMap<String, Object>();
         // TODO: Initialize model here
@@ -32,6 +31,11 @@ public class ModelView {
         }
         this.model = modelMap;
 
+    }
+
+    public ModelView(String view) {
+        this.view = view;
+        this.model = null;
     }
 
     public String getView() {
