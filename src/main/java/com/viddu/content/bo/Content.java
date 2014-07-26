@@ -1,27 +1,25 @@
 package com.viddu.content.bo;
 
-import java.net.URL;
 import java.util.Set;
 
 import javax.ws.rs.FormParam;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "CONTENT")
-public class Content {
-    private Long id;
-
+public class Content implements Taggable {
     @FormParam("type")
     private ContentType type;
 
     @FormParam("url")
-    private URL url;
+    private String url;
 
     @FormParam("name")
     private String name;
 
+    @FormParam("tags")
     private Set<String> tags;
 
-    public Content(String name, ContentType type, URL url) {
+    public Content(String name, ContentType type, String url) {
         this.type = type;
         this.url = url;
         this.name = name;
@@ -31,15 +29,11 @@ public class Content {
 
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public ContentType getType() {
         return type;
     }
 
-    public URL getUrl() {
+    public String getUrl() {
         return url;
     }
 
@@ -47,15 +41,13 @@ public class Content {
         return name;
     }
 
+    @Override
     public Set<String> getTags() {
         return tags;
     }
 
+    @Override
     public void setTags(Set<String> tags) {
         this.tags = tags;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 }
