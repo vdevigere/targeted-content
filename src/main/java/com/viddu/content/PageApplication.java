@@ -12,13 +12,11 @@ import javax.inject.Singleton;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viddu.content.bo.MenuItem;
 import com.viddu.content.resource.DashboardResource;
 import com.viddu.content.tiles.TilesMessageBodyWriter;
+import javax.inject.Named;
 
 @ApplicationPath("/page")
 public class PageApplication extends Application {
@@ -32,13 +30,7 @@ public class PageApplication extends Application {
         return resources;
     }
 
-    @Produces
-    @Singleton
-    public JedisPool getConnection() {
-        JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost", 6379);
-        return pool;
-    }
-
+    @Named
     @Produces
     @Singleton
     public ObjectMapper getMapper() {

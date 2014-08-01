@@ -2,18 +2,16 @@ package com.viddu.content.bo;
 
 import java.util.Map;
 
-import javax.ws.rs.FormParam;
-import javax.xml.bind.annotation.XmlRootElement;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@XmlRootElement(name = "CONTENT")
 public class Content {
 
     private long _id;
 
-    @FormParam("name")
     private String name;
 
-    private Map<String, String> target;
+    private Map<String, Object> target;
 
     private ContentData[] contentData;
 
@@ -29,11 +27,33 @@ public class Content {
         return name;
     }
 
-    public Map<String, String> getTarget() {
+    public Map<String, Object> getTarget() {
         return target;
     }
 
-    public void setTarget(Map<String, String> target) {
+    public void setTarget(Map<String, Object> target) {
         this.target = target;
+    }
+
+    @JsonIgnore
+    public long get_id() {
+        return _id;
+    }
+
+    @JsonProperty
+    public void set_id(long _id) {
+        this._id = _id;
+    }
+
+    public ContentData[] getContentData() {
+        return contentData;
+    }
+
+    public void setContentData(ContentData[] contentData) {
+        this.contentData = contentData;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

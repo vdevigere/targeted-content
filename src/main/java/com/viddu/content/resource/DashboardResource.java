@@ -25,7 +25,7 @@ public class DashboardResource {
     Map<String, Object> pageModel;
 
     @GET
-    @Path("/addNew.html")
+    @Path("/new.html")
     public ModelView addNew() {
         ModelView modelView = new ModelView("content.addNew", pageModel);
         return modelView;

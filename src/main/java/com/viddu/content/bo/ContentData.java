@@ -5,10 +5,13 @@ public class ContentData {
     private final byte[] data;
     private final Integer weight;
 
+    public ContentData() {
+        this("", 0);
+    }
 
-    public ContentData(byte[] data, Integer weight) {
+    public ContentData(String data, Integer weight) {
         super();
-        this.data = data;
+        this.data = data.getBytes();
         this.weight = weight;
     }
 
