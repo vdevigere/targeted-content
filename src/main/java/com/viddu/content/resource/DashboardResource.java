@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.viddu.content.PageModel;
-import com.viddu.content.bo.ContentType;
 import com.viddu.content.tiles.ModelView;
 
 @Path("/dashboard")
@@ -28,7 +27,6 @@ public class DashboardResource {
     @GET
     @Path("/addNew.html")
     public ModelView addNew() {
-        pageModel.put("contentTypeValues", ContentType.values());
         ModelView modelView = new ModelView("content.addNew", pageModel);
         return modelView;
     }
@@ -36,7 +34,6 @@ public class DashboardResource {
     @GET
     @Path("/home.html")
     public ModelView goHome() {
-        pageModel.put("contentTypeValues", ContentType.values());
         ModelView modelView = new ModelView("home", pageModel);
         return modelView;
     }

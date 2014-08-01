@@ -1,27 +1,23 @@
 package com.viddu.content.bo;
 
-import java.util.Set;
+import java.util.Map;
 
 import javax.ws.rs.FormParam;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "CONTENT")
-public class Content implements Taggable {
-    @FormParam("type")
-    private ContentType type;
+public class Content {
 
-    @FormParam("url")
-    private String url;
+    private long _id;
 
     @FormParam("name")
     private String name;
 
-    @FormParam("tags")
-    private Set<String> tags;
+    private Map<String, String> target;
 
-    public Content(String name, ContentType type, String url) {
-        this.type = type;
-        this.url = url;
+    private ContentData[] contentData;
+
+    public Content(String name) {
         this.name = name;
     }
 
@@ -29,25 +25,15 @@ public class Content implements Taggable {
 
     }
 
-    public ContentType getType() {
-        return type;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
     public String getName() {
         return name;
     }
 
-    @Override
-    public Set<String> getTags() {
-        return tags;
+    public Map<String, String> getTarget() {
+        return target;
     }
 
-    @Override
-    public void setTags(Set<String> tags) {
-        this.tags = tags;
+    public void setTarget(Map<String, String> target) {
+        this.target = target;
     }
 }
