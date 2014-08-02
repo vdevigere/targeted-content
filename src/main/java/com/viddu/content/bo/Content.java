@@ -1,6 +1,10 @@
 package com.viddu.content.bo;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,10 +17,14 @@ public class Content {
 
     private Map<String, Object> target;
 
-    private ContentData[] contentData;
+    private Set<ContentData> contentDataSet;
 
-    public Content(String name) {
+    public Content(String name, Date sDate, Date eDate) {
         this.name = name;
+        contentDataSet = new LinkedHashSet<>();
+        target = new HashMap<String, Object>();
+        target.put("startDate", sDate);
+        target.put("endDate", eDate);
     }
 
     public Content() {
@@ -45,15 +53,11 @@ public class Content {
         this._id = _id;
     }
 
-    public ContentData[] getContentData() {
-        return contentData;
-    }
-
-    public void setContentData(ContentData[] contentData) {
-        this.contentData = contentData;
-    }
-
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void addContentData(ContentData contentData) {
+        contentDataSet.add(contentData);
     }
 }

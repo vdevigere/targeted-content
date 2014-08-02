@@ -1,6 +1,11 @@
 package com.viddu.content.resource;
 
-import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.IntStream;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -16,11 +21,10 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viddu.content.bo.Content;
 import com.viddu.content.bo.ContentDAO;
+import com.viddu.content.bo.ContentData;
 
 @Path("/content")
 @ApplicationScoped
@@ -48,10 +52,20 @@ public class ContentResource {
     @Path("/save")
     @Consumes("application/x-www-form-urlencoded")
     @Produces("text/html")
-    public String saveContent(MultivaluedMap<String, String> formParams) throws JsonParseException, JsonMappingException, IOException {
-        for(String key : formParams.keySet()){
-            logger.debug("{}->{}", key, formParams.get(key));
-        }
+    public String saveContent(MultivaluedMap<String, String> formParams) throws ParseException {
+        String name = formParams.getFirst("content-name");
+        List<String> dataList = formParams.get("content-data");
+        List<String> weightList = formParams.get("content-weight");
+        DateFormat sdf = new SimpleDateFormat("mm-dd-yyyy");
+        Date sDate = sdf.parse(formParams.getFirst("start-date"));
+        Date eDate = sdf.parse(formParams.getFirst("end-date"));
+        Content content = new Content(name, sDate, eDate);
+        IntStream.range(0, dataList.size()).parallel().forEach(index -> {
+            String data = dataList.get(index);
+            Integer weight = Integer.parseInt(weightList.get(index));
+            ContentData contentData = new ContentData(data, weight);
+            content.addContentData(contentData);
+        });
         return null;
     }
 }

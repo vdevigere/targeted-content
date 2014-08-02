@@ -1,25 +1,28 @@
 package com.viddu.content.bo;
 
-
 public class ContentData {
-    private final byte[] data;
-    private final Integer weight;
+    private String data;
 
-    public ContentData() {
-        this("", 0);
-    }
+    private Integer weight;
 
     public ContentData(String data, Integer weight) {
-        super();
-        this.data = data.getBytes();
+        this.data = data;
         this.weight = weight;
     }
 
-    public byte[] getData() {
+    public String getData() {
         return data;
     }
 
     public Integer getWeight() {
         return weight;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
     }
 }
