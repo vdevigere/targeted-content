@@ -12,7 +12,7 @@
 <!-- Bootstrap core CSS -->
 <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css">
-<link href="/static/css/simple.css" rel="stylesheet">
+<link href="/static/targeted-content/css/simple.css" rel="stylesheet">
 <link href="/static/tag-it/css/jquery.tagit.css" rel="stylesheet">
 </head>
 <body>
@@ -34,6 +34,6 @@
 	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="/static/tag-it/js/tag-it.min.js"></script>
-	<script type="text/javascript" src="/static/js/targeted-content.js"></script>
+	<script type="text/javascript" src="/static/targeted-content/js/targeted-content.js"></script>
 </body>
 </html>

@@ -40,6 +40,8 @@ public class ContentResource {
 
     private static final Logger logger = LoggerFactory.getLogger(ContentResource.class);
 
+    private static final DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+
     @GET
     @Path("/{id}")
     @Produces("application/json")
@@ -56,7 +58,6 @@ public class ContentResource {
         String name = formParams.getFirst("content-name");
         List<String> dataList = formParams.get("content-data");
         List<String> weightList = formParams.get("content-weight");
-        DateFormat sdf = new SimpleDateFormat("mm-dd-yyyy");
         Date sDate = sdf.parse(formParams.getFirst("start-date"));
         Date eDate = sdf.parse(formParams.getFirst("end-date"));
         Content content = new Content(name, sDate, eDate);
