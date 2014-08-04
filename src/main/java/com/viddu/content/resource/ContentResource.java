@@ -57,10 +57,6 @@ public class ContentResource {
             content.addContentData(contentData);
         });
         content.addTags(formParams.get("tags"));
-        if (id == null || id.isEmpty()) {
-            return contentDAO.save(content);
-        }else{
-            return contentDAO.update(content, id);
-        }
+        return contentDAO.saveUpdate(content, id);
     }
 }

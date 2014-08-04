@@ -53,10 +53,10 @@ public class DashboardResource {
 
     @GET
     @Path("/edit.html")
-    public ModelView viewUpdate(@QueryParam("_id") String _id) {
-        Content content = contentDAO.findContentById(_id);
+    public ModelView viewUpdate(@QueryParam("id") String id) {
+        Content content = contentDAO.findContentById(id);
         pageModel.put("content", content);
-        pageModel.put("id", _id);
+        pageModel.put("id", id);
         ModelView modelView = new ModelView("content.addNew", pageModel);
         return modelView;
     }

@@ -41,36 +41,25 @@ public class ElasticSearchDb implements ContentDAO {
             String contentJson = mapper.writeValueAsString(response.getSource());
             Content content = mapper.readValue(contentJson, Content.class);
             return content;
-        } catch (JsonProcessingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.debug("JSON or IOException", e);
         }
         return null;
     }
 
     @Override
-    public String save(Content content) {
-        try {
-            String contentJSON = mapper.writeValueAsString(content);
-            IndexResponse response = client.prepareIndex(INDEX_NAME, TYPE_NAME).setSource(contentJSON).execute()
-                    .actionGet();
-            return response.getId();
-        } catch (JsonProcessingException e) {
-            logger.error("Json Processing Exception", e);
-        }
-        return null;
-    }
-
-    @Override
-    public String update(Content content, String id) {
+    public String saveUpdate(Content content, String id) {
         try {
             String contentJson = mapper.writeValueAsString(content);
-            IndexResponse response = client.prepareIndex(INDEX_NAME, TYPE_NAME, id).setSource(contentJson).execute()
-                    .actionGet();
-            return new Long(response.getVersion()).toString();
+            if (id != null && !id.isEmpty()) {
+                IndexResponse response = client.prepareIndex(INDEX_NAME, TYPE_NAME, id).setSource(contentJson)
+                        .execute().actionGet();
+                return response.getId();
+            } else {
+                IndexResponse response = client.prepareIndex(INDEX_NAME, TYPE_NAME).setSource(contentJson).execute()
+                        .actionGet();
+                return response.getId();
+            }
         } catch (JsonProcessingException e) {
             logger.error("Json Processing Exception", e);
         }
