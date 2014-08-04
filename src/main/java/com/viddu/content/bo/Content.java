@@ -1,5 +1,6 @@
 package com.viddu.content.bo;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -11,13 +12,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Content {
 
-    private long _id;
+    private String _id;
 
-    private String name;
+    private final String name;
 
-    private Map<String, Object> target;
+    private final Map<String, Object> target;
 
-    private Set<ContentData> contentDataSet;
+    private final Set<ContentData> contentDataSet;
 
     public Content(String name, Date sDate, Date eDate) {
         this.name = name;
@@ -25,10 +26,6 @@ public class Content {
         target = new HashMap<String, Object>();
         target.put("startDate", sDate);
         target.put("endDate", eDate);
-    }
-
-    public Content() {
-
     }
 
     public String getName() {
@@ -39,25 +36,28 @@ public class Content {
         return target;
     }
 
-    public void setTarget(Map<String, Object> target) {
-        this.target = target;
-    }
-
     @JsonIgnore
-    public long get_id() {
+    public String get_id() {
         return _id;
     }
 
     @JsonProperty
-    public void set_id(long _id) {
+    public void set_id(String _id) {
         this._id = _id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public void addContentData(ContentData contentData) {
         contentDataSet.add(contentData);
+    }
+
+    public void addTags(Collection<String> tags) {
+        target.put("tags", tags);
+    }
+
+    public Collection<String> getTags(){
+        return (Collection<String>) target.get("tags");
+    }
+    public Set<ContentData> getContentDataSet() {
+        return contentDataSet;
     }
 }

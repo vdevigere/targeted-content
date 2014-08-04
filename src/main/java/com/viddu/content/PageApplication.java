@@ -8,15 +8,12 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.enterprise.inject.Produces;
-import javax.inject.Singleton;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viddu.content.bo.MenuItem;
 import com.viddu.content.resource.DashboardResource;
 import com.viddu.content.tiles.TilesMessageBodyWriter;
-import javax.inject.Named;
 
 @ApplicationPath("/page")
 public class PageApplication extends Application {
@@ -30,13 +27,6 @@ public class PageApplication extends Application {
         return resources;
     }
 
-    @Named
-    @Produces
-    @Singleton
-    public ObjectMapper getMapper() {
-        return new ObjectMapper();
-    }
-
     @Produces
     @PageModel
     public Map<String, Object> buildPageModel() {
@@ -48,9 +38,8 @@ public class PageApplication extends Application {
 
     private List<MenuItem> buildTopMenu() {
         List<MenuItem> topMenuItems = new LinkedList<MenuItem>();
-        topMenuItems.add(new MenuItem("Home", "#home", true));
-        topMenuItems.add(new MenuItem("About", "#about"));
-
+        topMenuItems.add(new MenuItem("Add New", "../new.html", true));
+        topMenuItems.add(new MenuItem("Search", "#search"));
         return topMenuItems;
     }
 

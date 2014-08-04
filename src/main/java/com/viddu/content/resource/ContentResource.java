@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.Consumes;
@@ -18,27 +17,16 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viddu.content.bo.Content;
 import com.viddu.content.bo.ContentDAO;
 import com.viddu.content.bo.ContentData;
 
 @Path("/content")
-@ApplicationScoped
 public class ContentResource {
 
     @Inject
-    @Named("elasticSearchDAO")
+    @Named("elasticSearch")
     private ContentDAO contentDAO;
-
-    @Inject
-    @Named("mapper")
-    private ObjectMapper mapper;
-
-    private static final Logger logger = LoggerFactory.getLogger(ContentResource.class);
 
     private static final DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
 
@@ -67,6 +55,7 @@ public class ContentResource {
             ContentData contentData = new ContentData(data, weight);
             content.addContentData(contentData);
         });
-        return null;
+        content.addTags(formParams.get("tags"));
+        return contentDAO.save(content);
     }
 }

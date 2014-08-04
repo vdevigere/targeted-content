@@ -1,9 +1,7 @@
 //Tag-it
 $(document).ready(function() {
-    $("#tags").tagit({
-    	autocomplete:{
-    		source: "../tag/all"
-    	}
+    $(".tags").tagit({
+    	fieldName: "tags"
     });
 
     $("#addContentBtn").click(function(e){
