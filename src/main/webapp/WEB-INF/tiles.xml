@@ -16,4 +16,8 @@
 	<definition name="home" extends="myapp.basePage">
 		<put-attribute name="body" value="/tiles/home.jsp" />
 	</definition>
+
+	<definition name="searchForm" extends="myapp.basePage">
+		<put-attribute name="body" value="/tiles/searchForm.jsp" />
+	</definition>
 </tiles-definitions>

@@ -38,8 +38,8 @@ public class PageApplication extends Application {
 
     private List<MenuItem> buildTopMenu() {
         List<MenuItem> topMenuItems = new LinkedList<MenuItem>();
-        topMenuItems.add(new MenuItem("Add New", "../new.html", true));
-        topMenuItems.add(new MenuItem("Search", "#search"));
+        topMenuItems.add(new MenuItem("Add New", "new.html", true));
+        topMenuItems.add(new MenuItem("Search", "search.html"));
         return topMenuItems;
     }
 

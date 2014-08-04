@@ -10,6 +10,10 @@ public class ContentData {
         this.weight = weight;
     }
 
+    public ContentData() {
+        // TODO Auto-generated constructor stub
+    }
+
     public String getData() {
         return data;
     }

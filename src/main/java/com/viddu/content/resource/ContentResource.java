@@ -28,7 +28,7 @@ public class ContentResource {
     @Named("elasticSearch")
     private ContentDAO contentDAO;
 
-    private static final DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+    private static final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     @GET
     @Path("/{id}")
@@ -48,6 +48,7 @@ public class ContentResource {
         List<String> weightList = formParams.get("content-weight");
         Date sDate = sdf.parse(formParams.getFirst("start-date"));
         Date eDate = sdf.parse(formParams.getFirst("end-date"));
+        String id = formParams.getFirst("id");
         Content content = new Content(name, sDate, eDate);
         IntStream.range(0, dataList.size()).parallel().forEach(index -> {
             String data = dataList.get(index);
@@ -56,6 +57,10 @@ public class ContentResource {
             content.addContentData(contentData);
         });
         content.addTags(formParams.get("tags"));
-        return contentDAO.save(content);
+        if (id == null || id.isEmpty()) {
+            return contentDAO.save(content);
+        }else{
+            return contentDAO.update(content, id);
+        }
     }
 }

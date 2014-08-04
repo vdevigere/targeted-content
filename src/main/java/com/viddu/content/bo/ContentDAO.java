@@ -7,4 +7,6 @@ public interface ContentDAO {
 
     public String save(Content content);
 
+    public String update(Content content, String id);
+
 }

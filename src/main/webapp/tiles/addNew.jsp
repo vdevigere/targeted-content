@@ -30,6 +30,7 @@
 	</div>
 </script>
 <form class="form-horizontal" role="form" action="../../api/content/save" method="post">
+	<input type="hidden" name="id" value="${id }">
 	<div class="container">
 		<!-- START: CONTENT -->
 		<div class="form-group">
@@ -93,8 +94,8 @@
 			<div class="panel-body">
 				<div class="form-group">
 					<label for="start-date" class="col-sm-3">Start Date</label>
-					<fmt:formatDate value="${content.target['startDate']}" pattern="yyyy-MM-dd" var="startDate"/>
-					<fmt:formatDate value="${content.target['endDate'] }" pattern="yyyy-MM-dd" var="endDate"/>
+					<fmt:formatDate value="${content.startDate}" pattern="yyyy-MM-dd" var="startDate"/>
+					<fmt:formatDate value="${content.endDate }" pattern="yyyy-MM-dd" var="endDate"/>
 					<div class="col-sm-3"><input type="date" class="form-control" id="start-date" name="start-date" placeholder="Start Date" value="${startDate }" /></div>
 					<label for="end-date" class="col-sm-3">End Date</label>
 					<div class="col-sm-3"><input type="date" class="form-control" id="end-date" name="end-date" placeholder="End Date" value="${endDate}"/></div>
