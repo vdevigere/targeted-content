@@ -41,7 +41,7 @@
 		<div class="form-group">
 			<label for="content-id" class="col-sm-2">Content Id</label>
 			<div class="col-sm-10">
-				<input type="text" class="form-control" id="id" name="id" value="${id }" disabled="disabled"/>
+				<input type="text" class="form-control" id="id" name="id" value="${id }" readonly="readonly"/>
 			</div>
 		</div>		
 		<!-- END: CONTENT -->
@@ -85,11 +85,6 @@
 			</div>
 		</div>
 		<!-- END: Content Data Section -->
-		<div class="form-group">
-			<button type="button" class="btn btn-success col-sm-2" id="addTargetBtn">Add Target</button>
-			<div class="col-sm-10"></div> 
-		</div>
-		
 		
 		<!-- START: TARGET SECTION -->
 		<div class="panel panel-info">
@@ -118,6 +113,9 @@
 			</div>
 		</div>
 		<!-- END: TARGET SECTION -->
-		<button type="submit" class="btn btn-default">Submit</button>
+		<div class="form-group">
+			<button type="submit" class="btn btn-primary col-sm-2">Submit</button>
+			<div class="col-sm-10"></div>
+		</div>
 	</div>
 </form>
