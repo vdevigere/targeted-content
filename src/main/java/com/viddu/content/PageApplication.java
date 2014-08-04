@@ -8,10 +8,17 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.enterprise.inject.Produces;
+import javax.inject.Named;
+import javax.servlet.ServletContext;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Context;
 
+import org.elasticsearch.client.Client;
+
+import com.viddu.content.bo.ContentDAO;
 import com.viddu.content.bo.MenuItem;
+import com.viddu.content.elasticsearch.ElasticSearchDb;
 import com.viddu.content.resource.DashboardResource;
 import com.viddu.content.tiles.TilesMessageBodyWriter;
 
@@ -19,6 +26,9 @@ import com.viddu.content.tiles.TilesMessageBodyWriter;
 public class PageApplication extends Application {
 
     private Set<Class<?>> resources = new LinkedHashSet<>();
+
+    @Context
+    private ServletContext context;
 
     @Override
     public Set<Class<?>> getClasses() {
@@ -49,4 +59,10 @@ public class PageApplication extends Application {
         return projectModel;
     }
 
+    @Produces
+    @Named("elasticSearch")
+    private ContentDAO getContentDAO() {
+        Client client = (Client) context.getAttribute("esClient");
+        return new ElasticSearchDb(client);
+    }
 }

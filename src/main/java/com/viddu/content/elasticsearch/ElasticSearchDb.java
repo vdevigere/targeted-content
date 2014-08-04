@@ -19,11 +19,6 @@ import com.viddu.content.bo.ContentDAO;
 @Named("elasticSearch")
 public class ElasticSearchDb implements ContentDAO {
 
-    private static final String INDEX_NAME = "local-index";
-    private static final String TYPE_NAME = "content";
-
-    private final Client client = ElasticSearch.INSTANCE.getClient();
-
     private static final ObjectMapper mapper = new ObjectMapper();
     static {
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -31,12 +26,16 @@ public class ElasticSearchDb implements ContentDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticSearchDb.class);
 
-    public ElasticSearchDb() {
+
+    private final Client client;
+
+    public ElasticSearchDb(Client client) {
+        this.client = client;
     }
 
     @Override
     public Content findContentById(String contentId) {
-        GetResponse response = client.prepareGet(INDEX_NAME, TYPE_NAME, contentId).execute().actionGet();
+        GetResponse response = client.prepareGet(ElasticSearchConstants.INDEX_NAME, ElasticSearchConstants.TYPE_NAME, contentId).execute().actionGet();
         try {
             String contentJson = mapper.writeValueAsString(response.getSource());
             Content content = mapper.readValue(contentJson, Content.class);
@@ -52,11 +51,11 @@ public class ElasticSearchDb implements ContentDAO {
         try {
             String contentJson = mapper.writeValueAsString(content);
             if (id != null && !id.isEmpty()) {
-                IndexResponse response = client.prepareIndex(INDEX_NAME, TYPE_NAME, id).setSource(contentJson)
+                IndexResponse response = client.prepareIndex(ElasticSearchConstants.INDEX_NAME, ElasticSearchConstants.TYPE_NAME, id).setSource(contentJson)
                         .execute().actionGet();
                 return response.getId();
             } else {
-                IndexResponse response = client.prepareIndex(INDEX_NAME, TYPE_NAME).setSource(contentJson).execute()
+                IndexResponse response = client.prepareIndex(ElasticSearchConstants.INDEX_NAME, ElasticSearchConstants.TYPE_NAME).setSource(contentJson).execute()
                         .actionGet();
                 return response.getId();
             }
