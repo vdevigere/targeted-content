@@ -29,8 +29,7 @@
 		</div>
 	</div>
 </script>
-<form class="form-horizontal" role="form" action="../../api/content/save" method="post">
-	<input type="hidden" name="id" value="${id }">
+<form class="form-horizontal" role="form" action="save.html" method="post">
 	<div class="container">
 		<!-- START: CONTENT -->
 		<div class="form-group">
@@ -39,6 +38,12 @@
 				<input type="text" class="form-control" id="content-name" name="content-name" placeholder="Enter Name" value="${content.name }" />
 			</div>
 		</div>
+		<div class="form-group">
+			<label for="content-id" class="col-sm-2">Content Id</label>
+			<div class="col-sm-10">
+				<input type="text" class="form-control" id="id" name="id" value="${id }" disabled="disabled"/>
+			</div>
+		</div>		
 		<!-- END: CONTENT -->
 		
 		
