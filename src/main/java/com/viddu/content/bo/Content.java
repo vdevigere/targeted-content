@@ -17,7 +17,7 @@ public class Content {
     @JsonIgnore
     private String id;
 
-    private final Map<String, Object> target;
+    private final Map<String, String[]> target;
 
     private final Set<ContentData> contentDataSet;
 
@@ -26,14 +26,14 @@ public class Content {
     public Content(String name, Date sDate, Date eDate) {
         this.name = name;
         contentDataSet = new LinkedHashSet<>();
-        target = new HashMap<String, Object>();
+        target = new HashMap<String, String[]>();
         this.startDate = sDate;
         this.endDate = eDate;
     }
 
     public Content() {
         this.contentDataSet = new LinkedHashSet<>();
-        this.target = new HashMap<String, Object>();
+        this.target = new HashMap<String, String[]>();
         startDate = endDate = Calendar.getInstance().getTime();
         this.name = "";
     }
@@ -41,7 +41,7 @@ public class Content {
         return name;
     }
 
-    public Map<String, Object> getTarget() {
+    public Map<String, String[]> getTarget() {
         return target;
     }
 
@@ -50,13 +50,14 @@ public class Content {
     }
 
     public void addTags(Collection<String> tags) {
-        target.put("tags", tags);
+        String[] sArray={"test"};
+        target.put("tags", tags.toArray(sArray));
     }
 
     @SuppressWarnings("unchecked")
     @JsonIgnore
-    public Collection<String> getTags() {
-        return (Collection<String>) target.get("tags");
+    public String[] getTags() {
+        return target.get("tags");
     }
 
     public Set<ContentData> getContentDataSet() {
