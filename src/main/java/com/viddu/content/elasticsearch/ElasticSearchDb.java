@@ -2,8 +2,6 @@ package com.viddu.content.elasticsearch;
 
 import java.io.IOException;
 
-import javax.inject.Named;
-
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
@@ -16,7 +14,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.viddu.content.bo.Content;
 import com.viddu.content.bo.ContentDAO;
 
-@Named("elasticSearch")
 public class ElasticSearchDb implements ContentDAO {
 
     private static final ObjectMapper mapper = new ObjectMapper();
