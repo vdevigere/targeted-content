@@ -9,7 +9,6 @@
 			<div class="col-sm-10">
 				<ul class="tags">
 				</ul>
-<!-- 				<input type="text" class="form-control" id="content-tags" name="tags" placeholder="Enter Tags to Filter" /> -->
 			</div>
 			<div class="col-sm-2"><button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span></button></div>
 		</div>
@@ -23,15 +22,20 @@
 				<th>Name</th>
 				<th>Start Date</th>
 				<th>End Date</th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>
 		<c:forEach var="contentRow" items="${validContent }">
 			<tr>
-				<td><a href="edit.html?id=${contentRow.id }">${contentRow.id }</a></td>
+				<td>${contentRow.id }</td>
 				<td>${contentRow.name }</td>
 				<td>${contentRow.startDate }</td>
 				<td>${contentRow.endDate }</td>
+				<td>
+					<a href="edit.html?id=${contentRow.id }"><span class="glyphicon glyphicon-edit"></span></a>
+					<a href="delete.html?id=${contentRow.id }"><span class="glyphicon glyphicon-trash"></span></a>
+				</td>
 			</tr>
 		</c:forEach>
 		</tbody>

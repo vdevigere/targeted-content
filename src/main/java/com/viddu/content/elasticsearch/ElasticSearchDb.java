@@ -8,12 +8,12 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TimeZone;
 
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.BoolFilterBuilder;
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.search.SearchHits;
 import org.slf4j.Logger;
@@ -102,6 +102,14 @@ public class ElasticSearchDb implements ContentDAO {
             logger.error("Json Processing Exception", e);
         }
         return null;
+    }
+
+    @Override
+    public String deleteContentById(String id) {
+        DeleteResponse response = client.prepareDelete(ElasticSearchConstants.INDEX_NAME, ElasticSearchConstants.TYPE_NAME, id)
+                .execute()
+                .actionGet();
+        return response.toString();
     }
 
 }

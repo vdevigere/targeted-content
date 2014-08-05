@@ -10,4 +10,6 @@ public interface ContentDAO {
 
     public abstract Collection<Content> findContentActiveNow(Collection<String> tags);
 
+    public String deleteContentById(String id);
+
 }

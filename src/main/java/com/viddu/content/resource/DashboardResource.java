@@ -50,7 +50,7 @@ public class DashboardResource {
     @GET
     @Path("/search.html")
     public ModelView searchById(@QueryParam("tags") List<String> tags) {
-        logger.debug("Tags={}",tags);
+        logger.debug("Tags={}", tags);
         pageModel.put("validContent", contentDAO.findContentActiveNow(tags));
         ModelView modelView = new ModelView("searchForm", pageModel);
         return modelView;
@@ -69,6 +69,15 @@ public class DashboardResource {
         Content content = contentDAO.findContentById(id);
         pageModel.put("content", content);
         ModelView modelView = new ModelView("content.new", pageModel);
+        return modelView;
+    }
+
+    @GET
+    @Path("/delete.html")
+    public ModelView deleteContent(@QueryParam("id") String id) {
+        String status = contentDAO.deleteContentById(id);
+        pageModel.put("status", status);
+        ModelView modelView = new ModelView("content.delete", pageModel);
         return modelView;
     }
 

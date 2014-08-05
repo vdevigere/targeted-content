@@ -13,6 +13,10 @@
 		<put-attribute name="body" value="/tiles/addNew.jsp" />
 	</definition>
 
+	<definition name="content.delete" extends="myapp.basePage">
+		<put-attribute name="body" value="/tiles/delete.jsp" />
+	</definition>
+
 	<definition name="home" extends="myapp.basePage">
 		<put-attribute name="body" value="/tiles/home.jsp" />
 	</definition>
