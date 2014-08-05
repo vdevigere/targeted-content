@@ -4,10 +4,12 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
-<form class="form-horizontal" role="form" action="edit.html" method="GET">
+<form class="form-horizontal" role="form" action="search.html" method="GET">
 		<div class="form-group">
 			<div class="col-sm-10">
-				<input type="text" class="form-control" id="content-id" name="id" placeholder="Enter Content Id" />
+				<ul class="tags">
+				</ul>
+<!-- 				<input type="text" class="form-control" id="content-tags" name="tags" placeholder="Enter Tags to Filter" /> -->
 			</div>
 			<div class="col-sm-2"><button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span></button></div>
 		</div>
@@ -26,7 +28,7 @@
 		<tbody>
 		<c:forEach var="contentRow" items="${validContent }">
 			<tr>
-				<td>${contentRow.id }</td>
+				<td><a href="edit.html?id=${contentRow.id }">${contentRow.id }</a></td>
 				<td>${contentRow.name }</td>
 				<td>${contentRow.startDate }</td>
 				<td>${contentRow.endDate }</td>

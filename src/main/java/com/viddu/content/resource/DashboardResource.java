@@ -17,6 +17,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.viddu.content.PageModel;
 import com.viddu.content.bo.Content;
 import com.viddu.content.bo.ContentDAO;
@@ -28,6 +31,7 @@ public class DashboardResource {
 
     private static final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
+    private static final Logger logger = LoggerFactory.getLogger(DashboardResource.class);
     @Inject
     @PageModel
     Map<String, Object> pageModel;
@@ -45,8 +49,9 @@ public class DashboardResource {
 
     @GET
     @Path("/search.html")
-    public ModelView searchById() {
-        pageModel.put("validContent", contentDAO.findContentActiveNow());
+    public ModelView searchById(@QueryParam("tags") List<String> tags) {
+        logger.debug("Tags={}",tags);
+        pageModel.put("validContent", contentDAO.findContentActiveNow(tags));
         ModelView modelView = new ModelView("searchForm", pageModel);
         return modelView;
     }

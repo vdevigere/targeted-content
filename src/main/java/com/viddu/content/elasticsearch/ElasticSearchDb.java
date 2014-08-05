@@ -12,6 +12,7 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.search.SearchHits;
@@ -56,11 +57,14 @@ public class ElasticSearchDb implements ContentDAO {
     }
 
     @Override
-    public Collection<Content> findContentActiveNow() {
+    public Collection<Content> findContentActiveNow(Collection<String> tags) {
         Date now = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
         Set<Content> validContent = new LinkedHashSet<>();
-        FilterBuilder dateFilter = FilterBuilders.boolFilter().must(FilterBuilders.rangeFilter("startDate").lte(now),
+        BoolFilterBuilder dateFilter = FilterBuilders.boolFilter().must(FilterBuilders.rangeFilter("startDate").lte(now),
                 FilterBuilders.rangeFilter("endDate").gte(now));
+        if(tags != null && !tags.isEmpty()){
+            dateFilter = dateFilter.should(FilterBuilders.termsFilter("target.tags", tags));
+        }
         SearchResponse response = client
                 .prepareSearch(ElasticSearchConstants.INDEX_NAME, ElasticSearchConstants.TYPE_NAME)
                 .setPostFilter(dateFilter).execute().actionGet();
