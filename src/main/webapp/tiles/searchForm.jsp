@@ -12,3 +12,25 @@
 			<div class="col-sm-2"><button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span></button></div>
 		</div>
 </form>
+<div class="container">
+	<div class="row">
+	<table class="table table-striped table-bordered col-sm-12">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Start Date</th>
+				<th>End Date</th>
+			</tr>
+		</thead>
+		<tbody>
+		<c:forEach var="contentRow" items="${validContent }">
+			<tr>
+				<td>${contentRow.name }</td>
+				<td>${contentRow.startDate }</td>
+				<td>${contentRow.endDate }</td>
+			</tr>
+		</c:forEach>
+		</tbody>
+	</table>
+	</div>
+</div>

@@ -52,6 +52,7 @@ public class DashboardResource {
     @GET
     @Path("/search.html")
     public ModelView searchById(@QueryParam("id") String _id) {
+        pageModel.put("validContent", contentDAO.findContentActiveNow());
         ModelView modelView = new ModelView("searchForm", pageModel);
         return modelView;
     }
