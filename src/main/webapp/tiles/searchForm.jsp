@@ -17,6 +17,7 @@
 	<table class="table table-striped table-bordered col-sm-12">
 		<thead>
 			<tr>
+				<th>#</th>
 				<th>Name</th>
 				<th>Start Date</th>
 				<th>End Date</th>
@@ -25,6 +26,7 @@
 		<tbody>
 		<c:forEach var="contentRow" items="${validContent }">
 			<tr>
+				<td>${contentRow.id }</td>
 				<td>${contentRow.name }</td>
 				<td>${contentRow.startDate }</td>
 				<td>${contentRow.endDate }</td>

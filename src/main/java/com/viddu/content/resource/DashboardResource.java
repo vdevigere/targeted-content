@@ -14,13 +14,8 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MultivaluedMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.viddu.content.PageModel;
 import com.viddu.content.bo.Content;
@@ -31,7 +26,6 @@ import com.viddu.content.tiles.ModelView;
 @Path("/dashboard")
 public class DashboardResource {
 
-    private static final Logger logger = LoggerFactory.getLogger(DashboardResource.class);
     private static final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     @Inject
@@ -45,7 +39,7 @@ public class DashboardResource {
     @GET
     @Path("/new.html")
     public ModelView addNew() {
-        ModelView modelView = new ModelView("content.addNew", pageModel);
+        ModelView modelView = new ModelView("content.new", pageModel);
         return modelView;
     }
 
@@ -69,8 +63,7 @@ public class DashboardResource {
     public ModelView viewUpdate(@QueryParam("id") String id) {
         Content content = contentDAO.findContentById(id);
         pageModel.put("content", content);
-        pageModel.put("id", id);
-        ModelView modelView = new ModelView("content.addNew", pageModel);
+        ModelView modelView = new ModelView("content.new", pageModel);
         return modelView;
     }
 
@@ -78,7 +71,7 @@ public class DashboardResource {
     @Path("/save.html")
     @Consumes("application/x-www-form-urlencoded")
     public ModelView saveContent(MultivaluedMap<String, String> formParams) throws ParseException {
-        //Extract from FormParams
+        // Extract from FormParams
         String name = formParams.getFirst("content-name");
         List<String> dataList = formParams.get("content-data");
         List<String> weightList = formParams.get("content-weight");
@@ -95,18 +88,10 @@ public class DashboardResource {
         // If id is null or empty create and get new id.
         String id = contentDAO.saveUpdate(content, formParams.getFirst("id"));
 
-        //Return back to Edit page
+        // Return back to Edit page
         pageModel.put("content", content);
-        pageModel.put("id", id);
-        ModelView modelView = new ModelView("content.addNew", pageModel);
-        return modelView;
-    }
-
-    @GET
-    @Path("/{defName: .*[.html]}")
-    public ModelView sayTiles(@PathParam("defName") String defName) {
-        logger.debug("Definition Name={}", defName);
-        ModelView modelView = new ModelView("content.addNew", pageModel);
+        content.setId(id);
+        ModelView modelView = new ModelView("content.new", pageModel);
         return modelView;
     }
 }

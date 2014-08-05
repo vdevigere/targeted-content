@@ -41,7 +41,7 @@
 		<div class="form-group">
 			<label for="content-id" class="col-sm-2">Content Id</label>
 			<div class="col-sm-10">
-				<input type="text" class="form-control" id="id" name="id" value="${id }" readonly="readonly"/>
+				<input type="text" class="form-control" id="id" name="id" value="${content.id }" readonly="readonly"/>
 			</div>
 		</div>		
 		<!-- END: CONTENT -->

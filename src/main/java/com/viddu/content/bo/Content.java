@@ -14,6 +14,9 @@ public class Content {
 
     private final String name;
 
+    @JsonIgnore
+    private String id;
+
     private final Map<String, Object> target;
 
     private final Set<ContentData> contentDataSet;
@@ -66,5 +69,13 @@ public class Content {
 
     public Date getEndDate() {
         return endDate;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

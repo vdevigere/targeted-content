@@ -9,7 +9,7 @@
 		<put-attribute name="footer" value="/tiles/footer.jsp" />
 	</definition>
 
-	<definition name="content.addNew" extends="myapp.basePage">
+	<definition name="content.new" extends="myapp.basePage">
 		<put-attribute name="body" value="/tiles/addNew.jsp" />
 	</definition>
 

@@ -45,8 +45,9 @@ public class ElasticSearchDb implements ContentDAO {
                 .prepareGet(ElasticSearchConstants.INDEX_NAME, ElasticSearchConstants.TYPE_NAME, contentId).execute()
                 .actionGet();
         try {
-            String contentJson = mapper.writeValueAsString(response.getSource());
+            String contentJson = response.getSourceAsString();
             Content content = mapper.readValue(contentJson, Content.class);
+            content.setId(response.getId());
             return content;
         } catch (IOException e) {
             logger.debug("JSON or IOException", e);
@@ -68,6 +69,7 @@ public class ElasticSearchDb implements ContentDAO {
             String contentJson = hit.getSourceAsString();
             try {
                 Content content = mapper.readValue(contentJson, Content.class);
+                content.setId(hit.getId());
                 validContent.add(content);
             } catch (Exception e) {
                 logger.error("JsonParse Exception, {}", e);
