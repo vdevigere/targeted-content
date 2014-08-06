@@ -16,6 +16,7 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,9 +61,7 @@ public class ElasticSearchDb implements ContentDAO {
 
     @Override
     public Collection<Content> filterActiveContent(Collection<String> tags) {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-        Date now = cal.getTime();
-        logger.debug("Now={}", now);
+        Date now = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
         BoolFilterBuilder dateFilter = FilterBuilders.boolFilter().must(
                 FilterBuilders.rangeFilter("startDate").lte(now), FilterBuilders.rangeFilter("endDate").gte(now));
         if (tags != null && !tags.isEmpty()) {
@@ -70,7 +69,7 @@ public class ElasticSearchDb implements ContentDAO {
         }
         logger.debug("Filters={}", dateFilter);
         SearchResponse response = client.prepareSearch(ElasticSearchConstants.INDEX_NAME)
-                .setTypes(ElasticSearchConstants.TYPE_NAME).setPostFilter(dateFilter).execute().actionGet();
+                .setTypes(ElasticSearchConstants.TYPE_NAME).setPostFilter(dateFilter).addSort("startDate", SortOrder.DESC).execute().actionGet();
         SearchHits hits = response.getHits();
 
         Set<Content> validContent = new LinkedHashSet<>();
@@ -120,7 +119,7 @@ public class ElasticSearchDb implements ContentDAO {
     @Override
     public Collection<Content> findAllContent() {
         SearchResponse response = client.prepareSearch(ElasticSearchConstants.INDEX_NAME)
-                .setTypes(ElasticSearchConstants.TYPE_NAME).execute().actionGet();
+                .setTypes(ElasticSearchConstants.TYPE_NAME).addSort("startDate", SortOrder.DESC).execute().actionGet();
         SearchHits hits = response.getHits();
         Set<Content> validContent = new LinkedHashSet<>();
         hits.forEach(hit -> {
