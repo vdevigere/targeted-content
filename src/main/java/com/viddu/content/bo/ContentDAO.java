@@ -12,6 +12,6 @@ public interface ContentDAO {
 
     public abstract Collection<Content> findAllContent();
 
-    public String deleteContentById(String id);
+    public Status deleteContentById(String id);
 
 }

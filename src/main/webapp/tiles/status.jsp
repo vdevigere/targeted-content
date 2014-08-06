@@ -4,8 +4,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <!DOCTYPE html>
-<div class="container">
-	<div class="row">
-		<div class="col-sm-12">${status }</div>
-	</div>
+<div class="row">
+	<div class="alert ${alert.type.style } col-sm-12" role="alert">${alert.message }</div>
 </div>

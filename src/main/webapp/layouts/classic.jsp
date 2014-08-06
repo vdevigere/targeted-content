@@ -20,6 +20,7 @@
 		<tiles:insertAttribute name="header" />
 	</div>
 	<div class="container">
+		<tiles:insertAttribute name="status" ignore="true"/>
 		<tiles:insertAttribute name="body" />
 	</div>
 	<div class="container">

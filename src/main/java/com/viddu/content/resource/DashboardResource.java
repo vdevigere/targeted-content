@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.viddu.content.PageModel;
+import com.viddu.content.bo.Status;
 import com.viddu.content.bo.Content;
 import com.viddu.content.bo.ContentDAO;
 import com.viddu.content.bo.ContentData;
@@ -53,7 +54,7 @@ public class DashboardResource {
         logger.debug("Tags={}", tags);
         pageModel.put("validContent", contentDAO.filterActiveContent(tags));
         pageModel.put("allContent", contentDAO.findAllContent());
-        ModelView modelView = new ModelView("searchForm", pageModel);
+        ModelView modelView = new ModelView("content.search", pageModel);
         return modelView;
     }
 
@@ -76,8 +77,8 @@ public class DashboardResource {
     @GET
     @Path("/delete.html")
     public ModelView deleteContent(@QueryParam("id") String id) {
-        String status = contentDAO.deleteContentById(id);
-        pageModel.put("status", status);
+        Status alert = contentDAO.deleteContentById(id);
+        pageModel.put("alert", alert);
         ModelView modelView = new ModelView("content.delete", pageModel);
         return modelView;
     }

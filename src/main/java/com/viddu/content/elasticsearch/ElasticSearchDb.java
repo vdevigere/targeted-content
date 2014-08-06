@@ -24,6 +24,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.viddu.content.bo.Status;
 import com.viddu.content.bo.Content;
 import com.viddu.content.bo.ContentDAO;
 
@@ -109,11 +110,11 @@ public class ElasticSearchDb implements ContentDAO {
     }
 
     @Override
-    public String deleteContentById(String id) {
+    public Status deleteContentById(String id) {
         DeleteResponse response = client
                 .prepareDelete(ElasticSearchConstants.INDEX_NAME, ElasticSearchConstants.TYPE_NAME, id).execute()
                 .actionGet();
-        return (response.isFound()) ? "Success" : "Failed to Find Record";
+        return (response.isFound()) ? new Status(Status.Type.SUCCESS, "Deleted Successfully") : new Status(Status.Type.WARNING, "Could not find record");
     }
 
     @Override
