@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.viddu.content.bo.Content;
@@ -30,6 +31,7 @@ public class ElasticSearchDb implements ContentDAO {
     private static final ObjectMapper mapper = new ObjectMapper();
     static {
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
     }
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticSearchDb.class);
@@ -61,15 +63,14 @@ public class ElasticSearchDb implements ContentDAO {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         Date now = cal.getTime();
         logger.debug("Now={}", now);
-        BoolFilterBuilder dateFilter = FilterBuilders.boolFilter()
-                .must(FilterBuilders.rangeFilter("startDate").lte(now), FilterBuilders.rangeFilter("endDate").gte(now))
-                .cache(false);
+        BoolFilterBuilder dateFilter = FilterBuilders.boolFilter().must(
+                FilterBuilders.rangeFilter("startDate").lte(now), FilterBuilders.rangeFilter("endDate").gte(now));
         if (tags != null && !tags.isEmpty()) {
             dateFilter = dateFilter.should(FilterBuilders.termsFilter("target.tags", tags));
         }
-        SearchResponse response = client
-                .prepareSearch(ElasticSearchConstants.INDEX_NAME, ElasticSearchConstants.TYPE_NAME)
-                .setPostFilter(dateFilter).execute().actionGet();
+        logger.debug("Filters={}", dateFilter);
+        SearchResponse response = client.prepareSearch(ElasticSearchConstants.INDEX_NAME)
+                .setTypes(ElasticSearchConstants.TYPE_NAME).setPostFilter(dateFilter).execute().actionGet();
         SearchHits hits = response.getHits();
 
         Set<Content> validContent = new LinkedHashSet<>();
@@ -118,8 +119,8 @@ public class ElasticSearchDb implements ContentDAO {
 
     @Override
     public Collection<Content> findAllContent() {
-        SearchResponse response = client
-                .prepareSearch(ElasticSearchConstants.INDEX_NAME, ElasticSearchConstants.TYPE_NAME).execute().actionGet();
+        SearchResponse response = client.prepareSearch(ElasticSearchConstants.INDEX_NAME)
+                .setTypes(ElasticSearchConstants.TYPE_NAME).execute().actionGet();
         SearchHits hits = response.getHits();
         Set<Content> validContent = new LinkedHashSet<>();
         hits.forEach(hit -> {
@@ -129,7 +130,7 @@ public class ElasticSearchDb implements ContentDAO {
                 content.setId(hit.getId());
                 validContent.add(content);
             } catch (Exception e) {
-                logger.error("JsonParse Exception, {}", e);
+                logger.error("JsonParse Exception, {}", contentJson, e);
             }
             logger.debug("Hit:{}", contentJson);
         });
