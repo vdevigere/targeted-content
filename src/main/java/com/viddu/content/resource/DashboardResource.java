@@ -49,7 +49,7 @@ public class DashboardResource {
 
     @GET
     @Path("/search.html")
-    public ModelView searchById(@QueryParam("tags") List<String> tags) {
+    public ModelView search(@QueryParam("tags") List<String> tags) {
         logger.debug("Tags={}", tags);
         pageModel.put("validContent", contentDAO.filterActiveContent(tags));
         pageModel.put("allContent", contentDAO.findAllContent());
