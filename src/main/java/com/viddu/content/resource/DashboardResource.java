@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -21,10 +20,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.viddu.content.PageModel;
-import com.viddu.content.bo.Status;
 import com.viddu.content.bo.Content;
 import com.viddu.content.bo.ContentDAO;
 import com.viddu.content.bo.ContentData;
+import com.viddu.content.bo.Status;
 import com.viddu.content.tiles.ModelView;
 
 @Path("/dashboard")
@@ -38,7 +37,6 @@ public class DashboardResource {
     Map<String, Object> pageModel;
 
     @Inject
-    @Named("elasticSearch")
     private ContentDAO contentDAO;
 
     @GET

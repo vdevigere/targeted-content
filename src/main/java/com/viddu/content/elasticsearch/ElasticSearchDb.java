@@ -8,6 +8,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TimeZone;
 
+import javax.inject.Inject;
+
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
@@ -21,25 +23,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.viddu.content.bo.Status;
 import com.viddu.content.bo.Content;
 import com.viddu.content.bo.ContentDAO;
+import com.viddu.content.bo.Status;
 
 public class ElasticSearchDb implements ContentDAO {
 
-    private static final ObjectMapper mapper = new ObjectMapper();
-    static {
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-    }
+    @Inject
+    private ObjectMapper mapper;
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticSearchDb.class);
 
     private final Client client;
 
+    @Inject
     public ElasticSearchDb(Client client) {
         this.client = client;
     }
@@ -70,7 +68,8 @@ public class ElasticSearchDb implements ContentDAO {
         }
         logger.debug("Filters={}", dateFilter);
         SearchResponse response = client.prepareSearch(ElasticSearchConstants.INDEX_NAME)
-                .setTypes(ElasticSearchConstants.TYPE_NAME).setPostFilter(dateFilter).addSort("startDate", SortOrder.DESC).execute().actionGet();
+                .setTypes(ElasticSearchConstants.TYPE_NAME).setPostFilter(dateFilter)
+                .addSort("startDate", SortOrder.DESC).execute().actionGet();
         SearchHits hits = response.getHits();
 
         Set<Content> validContent = new LinkedHashSet<>();
@@ -114,7 +113,8 @@ public class ElasticSearchDb implements ContentDAO {
         DeleteResponse response = client
                 .prepareDelete(ElasticSearchConstants.INDEX_NAME, ElasticSearchConstants.TYPE_NAME, id).execute()
                 .actionGet();
-        return (response.isFound()) ? new Status(Status.Type.SUCCESS, "Deleted Successfully") : new Status(Status.Type.WARNING, "Could not find record");
+        return (response.isFound()) ? new Status(Status.Type.SUCCESS, "Deleted Successfully") : new Status(
+                Status.Type.WARNING, "Could not find record");
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.enterprise.inject.Produces;
-import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -16,9 +16,10 @@ import javax.ws.rs.core.Context;
 
 import org.elasticsearch.client.Client;
 
-import com.viddu.content.bo.ContentDAO;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.viddu.content.bo.MenuItem;
-import com.viddu.content.elasticsearch.ElasticSearchDb;
 import com.viddu.content.resource.DashboardResource;
 import com.viddu.content.tiles.TilesMessageBodyWriter;
 
@@ -60,9 +61,18 @@ public class PageApplication extends Application {
     }
 
     @Produces
-    @Named("elasticSearch")
-    private ContentDAO getContentDAO() {
+    @Singleton
+    private Client getEsClient() {
         Client client = (Client) context.getAttribute("esClient");
-        return new ElasticSearchDb(client);
+        return client;
+    }
+
+    @Produces
+    @Singleton
+    private ObjectMapper getObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        return mapper;
     }
 }
