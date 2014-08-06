@@ -57,18 +57,22 @@ public class ElasticSearchDb implements ContentDAO {
     }
 
     @Override
-    public Collection<Content> findContentActiveNow(Collection<String> tags) {
-        Date now = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
-        Set<Content> validContent = new LinkedHashSet<>();
-        BoolFilterBuilder dateFilter = FilterBuilders.boolFilter().must(FilterBuilders.rangeFilter("startDate").lte(now),
-                FilterBuilders.rangeFilter("endDate").gte(now));
-        if(tags != null && !tags.isEmpty()){
+    public Collection<Content> filterActiveContent(Collection<String> tags) {
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        Date now = cal.getTime();
+        logger.debug("Now={}", now);
+        BoolFilterBuilder dateFilter = FilterBuilders.boolFilter()
+                .must(FilterBuilders.rangeFilter("startDate").lte(now), FilterBuilders.rangeFilter("endDate").gte(now))
+                .cache(false);
+        if (tags != null && !tags.isEmpty()) {
             dateFilter = dateFilter.should(FilterBuilders.termsFilter("target.tags", tags));
         }
         SearchResponse response = client
                 .prepareSearch(ElasticSearchConstants.INDEX_NAME, ElasticSearchConstants.TYPE_NAME)
                 .setPostFilter(dateFilter).execute().actionGet();
         SearchHits hits = response.getHits();
+
+        Set<Content> validContent = new LinkedHashSet<>();
         hits.forEach(hit -> {
             String contentJson = hit.getSourceAsString();
             try {
@@ -106,10 +110,31 @@ public class ElasticSearchDb implements ContentDAO {
 
     @Override
     public String deleteContentById(String id) {
-        DeleteResponse response = client.prepareDelete(ElasticSearchConstants.INDEX_NAME, ElasticSearchConstants.TYPE_NAME, id)
-                .execute()
+        DeleteResponse response = client
+                .prepareDelete(ElasticSearchConstants.INDEX_NAME, ElasticSearchConstants.TYPE_NAME, id).execute()
                 .actionGet();
-        return response.toString();
+        return (response.isFound()) ? "Success" : "Failed to Find Record";
+    }
+
+    @Override
+    public Collection<Content> findAllContent() {
+        SearchResponse response = client
+                .prepareSearch(ElasticSearchConstants.INDEX_NAME, ElasticSearchConstants.TYPE_NAME).execute().actionGet();
+        SearchHits hits = response.getHits();
+        Set<Content> validContent = new LinkedHashSet<>();
+        hits.forEach(hit -> {
+            String contentJson = hit.getSourceAsString();
+            try {
+                Content content = mapper.readValue(contentJson, Content.class);
+                content.setId(hit.getId());
+                validContent.add(content);
+            } catch (Exception e) {
+                logger.error("JsonParse Exception, {}", e);
+            }
+            logger.debug("Hit:{}", contentJson);
+        });
+        return validContent;
+
     }
 
 }

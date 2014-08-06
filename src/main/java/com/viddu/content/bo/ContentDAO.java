@@ -8,7 +8,9 @@ public interface ContentDAO {
 
     public String saveUpdate(Content content, String id);
 
-    public abstract Collection<Content> findContentActiveNow(Collection<String> tags);
+    public abstract Collection<Content> filterActiveContent(Collection<String> tags);
+
+    public abstract Collection<Content> findAllContent();
 
     public String deleteContentById(String id);
 
