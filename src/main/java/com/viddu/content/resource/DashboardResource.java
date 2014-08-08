@@ -3,6 +3,7 @@ package com.viddu.content.resource;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -94,14 +95,17 @@ public class DashboardResource {
         List<String> weightList = formParams.get("content-weight");
         Date sDate = sdf.parse(formParams.getFirst("start-date"));
         Date eDate = sdf.parse(formParams.getFirst("end-date"));
+        Collection<String> tags = formParams.get("tags");
         Content content = new Content(name, sDate, eDate);
-        IntStream.range(0, dataList.size()).parallel().forEach(index -> {
-            String data = dataList.get(index);
-            Integer weight = Integer.parseInt(weightList.get(index));
-            ContentData contentData = new ContentData(data, weight);
-            content.addContentData(contentData);
-        });
-        content.addTags(formParams.get("tags"));
+        if (dataList != null && !dataList.isEmpty()) {
+            IntStream.range(0, dataList.size()).parallel().forEach(index -> {
+                String data = dataList.get(index);
+                Integer weight = Integer.parseInt(weightList.get(index));
+                ContentData contentData = new ContentData(data, weight);
+                content.addContentData(contentData);
+            });
+        }
+        content.addTags(tags);
         // If id is null or empty create and get new id.
         String id = contentDAO.saveUpdate(content, formParams.getFirst("id"));
 

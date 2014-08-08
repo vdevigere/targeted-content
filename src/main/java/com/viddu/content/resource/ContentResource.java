@@ -6,20 +6,23 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viddu.content.bo.Content;
 import com.viddu.content.bo.ContentDAO;
-import javax.ws.rs.core.MediaType;
+import com.viddu.content.bo.Status;
+
 @Path("/content")
 public class ContentResource {
 
@@ -29,20 +32,37 @@ public class ContentResource {
     @Inject
     private ContentDAO contentDAO;
 
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String create(String contentJson) throws JsonParseException, JsonMappingException, IOException {
+        Content content = mapper.readValue(contentJson, Content.class);
+        String savedId = contentDAO.saveUpdate(content, null);
+        return savedId;
+    }
+
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Content getById(@PathParam("id") String contentId) {
+    public Content read(@PathParam("id") String contentId) {
         return contentDAO.findContentById(contentId);
     }
 
-    @POST
+    @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public String createUpdateContent(String contentJson, @DefaultValue("") @QueryParam("id") String id) throws JsonParseException,
+    @Path("/{id}")
+    public String update(String contentJson, @PathParam("id") String id) throws JsonParseException,
             JsonMappingException, IOException {
         Content content = mapper.readValue(contentJson, Content.class);
         String savedId = contentDAO.saveUpdate(content, id);
         return savedId;
+    }
+
+    @DELETE
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/{id}")
+    public String delete(@PathParam("id") String id) {
+        Status status = contentDAO.deleteContentById(id);
+        return status.getMessage();
     }
 
     @GET
