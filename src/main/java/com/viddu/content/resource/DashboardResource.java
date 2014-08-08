@@ -13,7 +13,9 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.slf4j.Logger;
@@ -27,6 +29,7 @@ import com.viddu.content.bo.Status;
 import com.viddu.content.tiles.ModelView;
 
 @Path("/dashboard")
+@Produces(MediaType.TEXT_HTML)
 public class DashboardResource {
 
     private static final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -52,7 +55,7 @@ public class DashboardResource {
         logger.debug("Tags={}", tags);
         pageModel.put("validContent", contentDAO.filterActiveContent(tags));
         pageModel.put("allContent", contentDAO.findAllContent());
-        ModelView modelView = new ModelView("content.search", pageModel);
+        ModelView modelView = new ModelView("content.search.spa", pageModel);
         return modelView;
     }
 

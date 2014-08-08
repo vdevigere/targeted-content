@@ -14,7 +14,6 @@ public class Content {
 
     private final String name;
 
-    @JsonIgnore
     private String id;
 
     private final Map<String, Collection<String>> target;

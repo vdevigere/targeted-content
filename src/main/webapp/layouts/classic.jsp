@@ -10,7 +10,7 @@
 <link rel="icon" href="../../favicon.ico">
 <title><tiles:getAsString name="title" /></title>
 <!-- Bootstrap core CSS -->
-<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.11.0/themes/flick/jquery-ui.css">
 <link href="/static/targeted-content/css/simple.css" rel="stylesheet">
 <link href="/static/tag-it/css/jquery.tagit.css" rel="stylesheet">
@@ -28,13 +28,16 @@
 	</div>
 	<!-- /.container -->
 
-	<!-- Bootstrap core JavaScript
-    ================================================== -->
+	<!-- ===================================Bootstrap core JavaScript ========================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
-	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="/static/tag-it/js/tag-it.min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.4/handlebars.min.js"></script>
 	<script type="text/javascript" src="/static/targeted-content/js/targeted-content.js"></script>
+	<script type="text/javascript" src="/static/targeted-content/js/spa-targeted-content.js"></script>	
 </body>
 </html>

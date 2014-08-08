@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viddu.content.bo.Content;
 import com.viddu.content.bo.ContentDAO;
-
+import javax.ws.rs.core.MediaType;
 @Path("/content")
 public class ContentResource {
 
@@ -31,13 +31,13 @@ public class ContentResource {
 
     @GET
     @Path("/{id}")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     public Content getById(@PathParam("id") String contentId) {
         return contentDAO.findContentById(contentId);
     }
 
     @POST
-    @Consumes("application/json")
+    @Consumes(MediaType.APPLICATION_JSON)
     public String createUpdateContent(String contentJson, @DefaultValue("") @QueryParam("id") String id) throws JsonParseException,
             JsonMappingException, IOException {
         Content content = mapper.readValue(contentJson, Content.class);
@@ -47,14 +47,14 @@ public class ContentResource {
 
     @GET
     @Path("/all")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     public Collection<Content> getAll() {
         return contentDAO.findAllContent();
     }
 
     @GET
     @Path("active")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     public Collection<Content> getActive(@QueryParam("tags") List<String> tags) {
         return contentDAO.filterActiveContent(tags);
     }

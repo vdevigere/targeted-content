@@ -25,4 +25,9 @@
 	<definition name="content.search" extends="myapp.basePage">
 		<put-attribute name="body" value="/tiles/searchForm.jsp" />
 	</definition>
+
+	<definition name="content.search.spa" extends="myapp.basePage">
+		<put-attribute name="body" value="/tiles/ajaxSearch.jsp" />
+	</definition>
+
 </tiles-definitions>
