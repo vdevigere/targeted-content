@@ -1,4 +1,7 @@
-$(document).ready(function() {
+//Initialize Backbone Views
+var app = app || {};
+
+$(function() {
 	// Activate Tag-it widget
 	$(".tags").tagit({
 		fieldName : "tags"
@@ -22,5 +25,12 @@ $(document).ready(function() {
 	$('#myTab a').click(function(e) {
 		e.preventDefault()
 		$(this).tab('show')
+	});
+
+	var contentCollection = new app.ContentCollection();
+	var results = contentCollection.fetch();
+	results.done(function(data){
+		console.log(data);
+		app.ResultsView = new app.ContentListView(data);
 	});
 });

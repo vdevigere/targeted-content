@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
-<div class="container">
+<div class="container" id="contentListView">
 	<div class="row">
 		<div class="col-sm-12">
 			<ul class="tags">
@@ -31,33 +31,22 @@
 					</tr>
 				</thead>
 				<tbody id="contentList">
-					<c:forEach var="content" items="${allContent }">
-						<tr>
-							<td>${content.id }</td>
-							<td>${content.name }</td>
-							<td>${content.startDate }</td>
-							<td>${content.endDate }</td>
-							<td>
-								<a href="edit.html?id=${content.id }"><span class="glyphicon glyphicon-edit"></span></a>
-							</td>
-							<td>
-								<a href="delete.html?id=${content.id }"><span class="glyphicon glyphicon-trash"></span></a>
-							</td>
-						</tr>
-					</c:forEach>
 				</tbody>
 			</table>
 		</div>
 	</div>
 </div>
 <script id="content-row" type="text/x-handlebars-template">
-    {{#each objects}}
     <tr>
         <td>{{id}}</td>
         <td>{{name}}</td > 
-        <td>{{startDate}}</td>
-        <td>{{endDate}}</td >
-        <td></td>
+        <td>{{formatDate startDate "short"}}</td>
+        <td>{{formatDate endDate "short"}}</td >
+		<td>
+			<a href="edit.html?id={{id }}"><span class="glyphicon glyphicon-edit"></span></a>
+		</td>
+		<td>
+			<a href="delete.html?id={{id }}"><span class="glyphicon glyphicon-trash"></span></a>
+		</td>
     </tr>
-    {{/each}}
 </script>

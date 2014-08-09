@@ -73,7 +73,7 @@ public class ContentResource {
     }
 
     @GET
-    @Path("active")
+    @Path("/active")
     @Produces(MediaType.APPLICATION_JSON)
     public Collection<Content> getActive(@QueryParam("tags") List<String> tags) {
         return contentDAO.filterActiveContent(tags);
