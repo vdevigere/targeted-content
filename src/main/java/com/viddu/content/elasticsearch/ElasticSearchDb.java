@@ -13,8 +13,10 @@ import javax.inject.Inject;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.index.query.BaseFilterBuilder;
 import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.search.SearchHits;
@@ -66,25 +68,7 @@ public class ElasticSearchDb implements ContentDAO {
         if (tags != null && !tags.isEmpty()) {
             dateFilter = dateFilter.should(FilterBuilders.termsFilter("target.tags", tags));
         }
-        logger.debug("Filters={}", dateFilter);
-        SearchResponse response = client.prepareSearch(ElasticSearchConstants.INDEX_NAME)
-                .setTypes(ElasticSearchConstants.TYPE_NAME).setPostFilter(dateFilter)
-                .addSort("startDate", SortOrder.DESC).execute().actionGet();
-        SearchHits hits = response.getHits();
-
-        Set<Content> validContent = new LinkedHashSet<>();
-        hits.forEach(hit -> {
-            String contentJson = hit.getSourceAsString();
-            try {
-                Content content = mapper.readValue(contentJson, Content.class);
-                content.setId(hit.getId());
-                validContent.add(content);
-            } catch (Exception e) {
-                logger.error("JsonParse Exception, {}", e);
-            }
-            logger.debug("Hit:{}", contentJson);
-        });
-        return validContent;
+        return doSearch(dateFilter);
     }
 
     @Override
@@ -118,9 +102,25 @@ public class ElasticSearchDb implements ContentDAO {
     }
 
     @Override
-    public Collection<Content> findAllContent() {
-        SearchResponse response = client.prepareSearch(ElasticSearchConstants.INDEX_NAME)
-                .setTypes(ElasticSearchConstants.TYPE_NAME).addSort("startDate", SortOrder.DESC).execute().actionGet();
+    public Collection<Content> findAllContent(Collection<String> tags) {
+        if (tags != null && !tags.isEmpty()) {
+            return doSearch(FilterBuilders.termsFilter("target.tags", tags));
+        }
+        return doSearch();
+    }
+
+    protected Collection<Content> doSearch() {
+        return doSearch(null);
+    }
+
+    protected Collection<Content> doSearch(BaseFilterBuilder filter) {
+        logger.debug("Filter={}", filter);
+        SearchRequestBuilder searchRequest = client.prepareSearch(ElasticSearchConstants.INDEX_NAME)
+                .setTypes(ElasticSearchConstants.TYPE_NAME).addSort("startDate", SortOrder.DESC);
+        if (filter != null) {
+            searchRequest.setPostFilter(filter);
+        }
+        SearchResponse response = searchRequest.execute().actionGet();
         SearchHits hits = response.getHits();
         Set<Content> validContent = new LinkedHashSet<>();
         hits.forEach(hit -> {
@@ -135,7 +135,5 @@ public class ElasticSearchDb implements ContentDAO {
             logger.debug("Hit:{}", contentJson);
         });
         return validContent;
-
     }
-
 }

@@ -14,6 +14,22 @@
 <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.11.0/themes/flick/jquery-ui.css">
 <link href="/static/targeted-content/css/simple.css" rel="stylesheet">
 <link href="/static/tag-it/css/jquery.tagit.css" rel="stylesheet">
+<!--############## TEMPLATES ##############-->
+<script id="content-row" type="text/x-handlebars-template">
+    <tr>
+        <td>{{id}}</td>
+        <td>{{name}}</td > 
+        <td>{{formatDate startDate "short"}}</td>
+        <td>{{formatDate endDate "short"}}</td >
+		<td>
+			<a href="edit.html?id={{id }}"><span class="glyphicon glyphicon-edit"></span></a>
+		</td>
+		<td>
+			<a href="delete.html?id={{id }}"><span class="glyphicon glyphicon-trash"></span></a>
+		</td>
+    </tr>
+</script>
+<!-- ############## -->
 </head>
 <body>
 	<div class="container">
