@@ -4,14 +4,7 @@ var app = app || {};
 $(function() {
 	// Activate Tag-it widget
 	app.tagIt = $(".tags").tagit({
-		fieldName : "tags",
-		afterTagAdded : function(event, ui){
-			Backbone.trigger('tag:addTag', ui);
-		},
-
-		afterTagRemoved : function(event, ui){
-			Backbone.trigger('tag:removeTag', ui)
-		}
+		fieldName : "tags"
 	});
 
 	// On clicking the Add Content Button, add a new form to the dom.

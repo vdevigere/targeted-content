@@ -19,6 +19,7 @@ app.ContentListView = Backbone.View.extend({
 
 	events : {
 		'click #validOnly' : 'toggleValidContent', // Valid Only Checkbox
+		'change .tags' : 'tagChanged',
 	},
 
 	initialize : function(initialContent) {
@@ -27,9 +28,6 @@ app.ContentListView = Backbone.View.extend({
 		// Listen to "reset" events on model and render view if model is reset.
 		this.listenTo(this.collection, "reset", this.render);
 
-		// Listen to the tag changed event.
-		Backbone.on('tag:addTag', this.addTag, this);
-		Backbone.on('tag:removeTag', this.removeTag, this);
 		// Render on initialize
 		this.render();
 	},
@@ -52,22 +50,15 @@ app.ContentListView = Backbone.View.extend({
 
 	toggleValidContent : function(e) {
 		if (e.currentTarget.checked) {
-			console.log('fetching Valid Content...');
 			this.collection.findActive();
 		} else {
-			console.log('fetching All Content');
 			this.collection.findAll();
 		}
 	},
 
-	addTag : function(tag) {
-		this.collection.addTag(tag.tagLabel);
+	tagChanged : function(e){
+		this.collection.findByTag(e.currentTarget.value);
 	},
-
-	removeTag : function(tag) {
-		this.collection.removeTag(tag.tagLabel);
-	},
-
 });
 
 new app.ContentCollection().fetch().done(function(data) {

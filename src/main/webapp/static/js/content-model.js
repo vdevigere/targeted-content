@@ -37,22 +37,12 @@ app.ContentCollection = Backbone.Collection.extend({
 		return this;
 	},
 
-	addTag : function(tag) {
-		console.log('adding tag...');
-		console.log(tag);
-		this.tags.push(tag);
-		this.fetch({
-			reset : true
-		});
-		return this;
-	},
-
-	removeTag : function(tag) {
-		console.log('removing tag...');
-		console.log(tag);
-		var index = this.tags.indexOf(tag);
-		this.tags.splice(index, 1);
-		console.log(this.tags);
+	findByTag : function(csvTagList) {
+		if (csvTagList) {
+			this.tags = csvTagList.split(',');
+		} else {
+			this.tags = [];
+		}
 		this.fetch({
 			reset : true
 		});

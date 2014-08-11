@@ -6,8 +6,7 @@
 <div class="container" id="searchResultsForm">
 	<div class="row">
 		<div class="col-sm-12">
-			<ul class="tags">
-			</ul>
+			<input class="tags" name="tags" />
 		</div>
 	</div>
 	<form class="form-horizontal row" role="form">
