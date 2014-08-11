@@ -11,8 +11,6 @@ app.ContentCollection = Backbone.Collection.extend({
 		var queryString = '?'
 		if (this.activeOnly) {
 			url += '/active'
-		} else {
-			url += '/all'
 		}
 		// Build queryString
 		for (tag in this.tags) {

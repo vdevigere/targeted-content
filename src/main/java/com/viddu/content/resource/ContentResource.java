@@ -66,13 +66,6 @@ public class ContentResource {
     }
 
     @GET
-    @Path("/all")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Collection<Content> getAll(@QueryParam("tags") List<String> tags) {
-        return contentDAO.findAllContent(tags);
-    }
-
-    @GET
     @Path("/active")
     @Produces(MediaType.APPLICATION_JSON)
     public Collection<Content> getActive(@QueryParam("tags") List<String> tags) {
@@ -82,6 +75,6 @@ public class ContentResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Collection<Content> getByTag(@QueryParam("tags") List<String> tags) {
-        return contentDAO.filterActiveContent(tags);
+        return contentDAO.findAllContent(tags);
     }
 }
