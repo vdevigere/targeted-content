@@ -1,19 +1,21 @@
 var app = app || {};
 
-app.ContentView = Backbone.View.extend({
-	el : $('#contentList'), // Typically, the tBody element of a table
-
-	template : Handlebars.compile($('#content-row').html()),
+// The Content Detail View
+app.ContentDetailView = Backbone.View.extend({
+	template : Handlebars.compile($('#content-row-template').html()),
 
 	render : function() {
 		var html = this.template(this.model.attributes);
-		this.$el.append(html);// Add a row to tBody.
+		this.$el.append(html);
 		return this;
 	}
 });
 
+// The Content List Table
 app.ContentListView = Backbone.View.extend({
-	el : $("#contentListView"),
+	el : $("#searchResultsForm"),
+
+	template : Handlebars.compile($('#content-container-template').html()),
 
 	events : {
 		'click #validOnly' : 'toggleValidContent', // Valid Only Checkbox
@@ -33,20 +35,19 @@ app.ContentListView = Backbone.View.extend({
 	},
 
 	render : function() {
-		// Clear Table
-		this.$el.find('tbody').empty();
+		// Render the Headers
+		var header = this.template();
+		var contentContainer = this.$el.find('.contentContainer');
+		contentContainer.html(header);
 
 		// Render each row of collection.
-		this.collection.each(function(content) {
-			this.renderContent(content)
+		this.collection.each(function(contentData) {
+			var contentView = new app.ContentDetailView({
+				el : this.$el.find('tbody'),
+				model : contentData
+			});
+			contentView.render();
 		}, this);
-	},
-
-	renderContent : function(content) {
-		var contentView = new app.ContentView({
-			model : content
-		});
-		contentView.render();
 	},
 
 	toggleValidContent : function(e) {
