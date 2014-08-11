@@ -23,7 +23,7 @@ import com.viddu.content.PageModel;
 import com.viddu.content.bo.Content;
 import com.viddu.content.bo.ContentDAO;
 import com.viddu.content.bo.ContentData;
-import com.viddu.content.bo.Status;
+import com.viddu.content.bo.DashboardResponse;
 import com.viddu.content.tiles.ModelView;
 
 @Path("/dashboard")
@@ -72,8 +72,10 @@ public class DashboardResource {
     @GET
     @Path("/delete.html")
     public ModelView deleteContent(@QueryParam("id") String id) {
-        Status alert = contentDAO.deleteContentById(id);
-        pageModel.put("alert", alert);
+         boolean deleteSuccessful = contentDAO.deleteContentById(id);
+         DashboardResponse<String> deleteStatus = (deleteSuccessful) ? new DashboardResponse<String>(DashboardResponse.Type.SUCCESS, "Deleted Successfully", id) : new DashboardResponse<String>(
+                DashboardResponse.Type.WARNING, "Could not find record", id);
+        pageModel.put("status", deleteStatus);
         ModelView modelView = new ModelView("content.delete", pageModel);
         return modelView;
     }
@@ -105,6 +107,8 @@ public class DashboardResource {
         // Return back to Edit page
         pageModel.put("content", content);
         content.setId(id);
+        DashboardResponse<String> saveStatus = new DashboardResponse<String>(DashboardResponse.Type.SUCCESS, "Saved Successfully", id);
+        pageModel.put("status", saveStatus);
         ModelView modelView = new ModelView("content.new", pageModel);
         return modelView;
     }

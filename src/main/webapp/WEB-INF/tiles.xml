@@ -7,6 +7,7 @@
 		<put-attribute name="title" value="Targeted Content" />
 		<put-attribute name="header" value="/tiles/banner.jsp" />
 		<put-attribute name="footer" value="/tiles/footer.jsp" />
+		<put-attribute name="status" value="/tiles/status.jsp" />
 	</definition>
 
 	<definition name="content.new" extends="myapp.basePage">
@@ -14,7 +15,6 @@
 	</definition>
 
 	<definition name="content.delete" extends="myapp.basePage">
-		<put-attribute name="status" value="/tiles/status.jsp" />
 		<put-attribute name="body" value=""></put-attribute>
 	</definition>
 

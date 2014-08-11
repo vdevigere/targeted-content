@@ -1,14 +1,16 @@
 package com.viddu.content.bo;
 
 
-public class Status {
+public class DashboardResponse<T> {
 
-    private String message;
-    private Type type;
+    private final String message;
+    private final Type type;
+    private final T response;
 
-    public Status(Type type, String message) {
+    public DashboardResponse(Type type, String message, T response) {
         this.type = type;
         this.message = message;
+        this.response = response;
     }
 
     public enum Type {
@@ -29,15 +31,11 @@ public class Status {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     public Type getType() {
         return type;
     }
 
-    public void setType(Type type) {
-        this.type = type;
+    public T getResponse() {
+        return response;
     }
 }

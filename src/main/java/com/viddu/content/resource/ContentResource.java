@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viddu.content.bo.Content;
 import com.viddu.content.bo.ContentDAO;
-import com.viddu.content.bo.Status;
 
 @Path("/content")
 public class ContentResource {
@@ -61,8 +60,8 @@ public class ContentResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/{id}")
     public String delete(@PathParam("id") String id) {
-        Status status = contentDAO.deleteContentById(id);
-        return status.getMessage();
+        boolean deleteStatus = contentDAO.deleteContentById(id);
+        return (deleteStatus) ? "Deleted Successfully" : "Could not find record to Delete";
     }
 
     @GET

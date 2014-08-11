@@ -1,6 +1,8 @@
 var app = app || {};
 
-app.Content = Backbone.Model.extend({});
+app.Content = Backbone.Model.extend({
+	url : '/targeted-content/api/content'
+});
 
 app.ContentCollection = Backbone.Collection.extend({
 	model : app.Content,
