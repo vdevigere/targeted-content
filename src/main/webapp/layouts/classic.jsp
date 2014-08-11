@@ -14,22 +14,6 @@
 <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.11.0/themes/flick/jquery-ui.css">
 <link href="/static/targeted-content/css/simple.css" rel="stylesheet">
 <link href="/static/tag-it/css/jquery.tagit.css" rel="stylesheet">
-<!--############## TEMPLATES ##############-->
-<script id="content-row" type="text/x-handlebars-template">
-    <tr>
-        <td>{{id}}</td>
-        <td>{{name}}</td > 
-        <td>{{formatDate startDate "short"}}</td>
-        <td>{{formatDate endDate "short"}}</td >
-		<td>
-			<a href="edit.html?id={{id }}"><span class="glyphicon glyphicon-edit"></span></a>
-		</td>
-		<td>
-			<a href="delete.html?id={{id }}"><span class="glyphicon glyphicon-trash"></span></a>
-		</td>
-    </tr>
-</script>
-<!-- ############## -->
 </head>
 <body>
 	<div class="container">
@@ -54,9 +38,9 @@
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.4/handlebars.min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
-	<script type="text/javascript" src="/static/targeted-content/js/handlebars-helpers.js"></script>	
+	<script type="text/javascript" src="/static/targeted-content/js/targeted-content.js"></script>
 	<script type="text/javascript" src="/static/targeted-content/js/content-model.js"></script>
 	<script type="text/javascript" src="/static/targeted-content/js/content-view.js"></script>
-	<script type="text/javascript" src="/static/targeted-content/js/targeted-content.js"></script>
+	<script type="text/javascript" src="/static/targeted-content/js/handlebars-helpers.js"></script>	
 </body>
 </html>
