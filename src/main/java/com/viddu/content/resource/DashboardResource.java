@@ -21,7 +21,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import com.viddu.content.PageModel;
 import com.viddu.content.bo.Content;
-import com.viddu.content.bo.ContentDAO;
+import com.viddu.content.bo.ContentDb;
 import com.viddu.content.bo.ContentData;
 import com.viddu.content.bo.DashboardResponse;
 import com.viddu.content.tiles.ModelView;
@@ -37,7 +37,7 @@ public class DashboardResource {
     Map<String, Object> pageModel;
 
     @Inject
-    private ContentDAO contentDAO;
+    private ContentDb contentDAO;
 
     @GET
     @Path("/new.html")

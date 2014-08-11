@@ -20,7 +20,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viddu.content.bo.Content;
-import com.viddu.content.bo.ContentDAO;
+import com.viddu.content.bo.ContentDb;
 
 @Path("/content")
 public class ContentResource {
@@ -29,7 +29,7 @@ public class ContentResource {
     private ObjectMapper mapper;
 
     @Inject
-    private ContentDAO contentDAO;
+    private ContentDb contentDAO;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

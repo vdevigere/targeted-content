@@ -1,8 +1,6 @@
 var app = app || {};
 
-app.Content = Backbone.Model.extend({
-	url : '/targeted-content/api/content'
-});
+app.Content = Backbone.Model.extend({});
 
 app.ContentCollection = Backbone.Collection.extend({
 	model : app.Content,
@@ -10,16 +8,19 @@ app.ContentCollection = Backbone.Collection.extend({
 	tags : [],
 	url : function() {
 		var url = '/targeted-content/api/content';
-		var queryString = '?'
 		if (this.activeOnly) {
 			url += '/active'
 		}
 		// Build queryString
-		for (tag in this.tags) {
-			queryString += 'tags=' + this.tags[tag] + '&'
+		var queryString='';
+		if (this.tags.length > 0) {
+			queryString = '?'
+			for (tag in this.tags) {
+				queryString += 'tags=' + this.tags[tag] + '&'
+			}
 		}
 		fullURL = url + queryString;
-		console.log('Fetch URL='+fullURL);
+		console.log('Fetch URL=' + fullURL);
 		return fullURL;
 	},
 
@@ -41,7 +42,7 @@ app.ContentCollection = Backbone.Collection.extend({
 		return this;
 	},
 
-	removeTag : function(tag){
+	removeTag : function(tag) {
 		console.log('removing tag...');
 		console.log(tag);
 		var index = this.tags.indexOf(tag);

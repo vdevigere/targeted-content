@@ -2,7 +2,7 @@ package com.viddu.content.bo;
 
 import java.util.Collection;
 
-public interface ContentDAO {
+public interface ContentDb {
 
     public Content findContentById(String contentId);
 

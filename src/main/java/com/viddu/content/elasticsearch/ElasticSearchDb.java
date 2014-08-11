@@ -27,10 +27,9 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viddu.content.bo.Content;
-import com.viddu.content.bo.ContentDAO;
-import com.viddu.content.bo.DashboardResponse;
+import com.viddu.content.bo.ContentDb;
 
-public class ElasticSearchDb implements ContentDAO {
+public class ElasticSearchDb implements ContentDb {
 
     @Inject
     private ObjectMapper mapper;
