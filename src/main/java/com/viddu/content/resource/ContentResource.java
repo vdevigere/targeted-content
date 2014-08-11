@@ -31,6 +31,14 @@ public class ContentResource {
     @Inject
     private ContentDb contentDAO;
 
+    /**
+     * CREATE
+     * @param contentJson
+     * @return
+     * @throws JsonParseException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public String create(String contentJson) throws JsonParseException, JsonMappingException, IOException {
@@ -39,6 +47,11 @@ public class ContentResource {
         return savedId;
     }
 
+    /**
+     * READ
+     * @param contentId
+     * @return
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -46,6 +59,15 @@ public class ContentResource {
         return contentDAO.findContentById(contentId);
     }
 
+    /**
+     * UPDATE
+     * @param contentJson
+     * @param id
+     * @return
+     * @throws JsonParseException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/{id}")
@@ -56,6 +78,11 @@ public class ContentResource {
         return savedId;
     }
 
+    /**
+     * DELETE
+     * @param id
+     * @return
+     */
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/{id}")
@@ -64,16 +91,19 @@ public class ContentResource {
         return (deleteStatus) ? "Deleted Successfully" : "Could not find record to Delete";
     }
 
+    /**
+     * READ ALL
+     * @param tags
+     * @param activeOnly
+     * @return
+     */
     @GET
-    @Path("/active")
     @Produces(MediaType.APPLICATION_JSON)
-    public Collection<Content> getActive(@QueryParam("tags") List<String> tags) {
-        return contentDAO.filterActiveContent(tags);
-    }
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Collection<Content> getByTag(@QueryParam("tags") List<String> tags) {
+    public Collection<Content> getByTag(@QueryParam("tags") List<String> tags,
+            @QueryParam("activeOnly") boolean activeOnly) {
+        if (activeOnly) {
+            return contentDAO.filterActiveContent(tags);
+        }
         return contentDAO.findAllContent(tags);
     }
 }

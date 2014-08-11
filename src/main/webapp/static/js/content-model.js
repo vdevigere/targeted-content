@@ -6,20 +6,25 @@ app.ContentCollection = Backbone.Collection.extend({
 	model : app.Content,
 	activeOnly : false,
 	tags : [],
+
+	getQueryString : function() {
+		var qs = "";
+		if (this.activeOnly) {
+			qs += 'activeOnly=' + this.activeOnly + '&';
+		}
+		for (tag in this.tags) {
+			qs += 'tags=' + this.tags[tag] + '&'
+		}
+		if (qs) {
+			return '?' + qs;
+		} else {
+			return qs;
+		}
+	},
+
 	url : function() {
 		var url = '/targeted-content/api/content';
-		if (this.activeOnly) {
-			url += '/active'
-		}
-		// Build queryString
-		var queryString='';
-		if (this.tags.length > 0) {
-			queryString = '?'
-			for (tag in this.tags) {
-				queryString += 'tags=' + this.tags[tag] + '&'
-			}
-		}
-		fullURL = url + queryString;
+		fullURL = url + this.getQueryString();
 		console.log('Fetch URL=' + fullURL);
 		return fullURL;
 	},
