@@ -30,7 +30,7 @@ var contentModule = (function(module) {
 		}
 	});
 
-	//View rendering the <tr> tag
+	//View rendering the <tr> tag 
 	ContentRowView = Backbone.View.extend({
 		template : Handlebars.compile($('#content-row-template').html()),
 		tagName : "tr",
