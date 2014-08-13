@@ -28,6 +28,35 @@
 	</div>
 	<!-- /.container -->
 
+	<!--  ========================= HANDLEBARs TEMPLATES ============================ -->
+<script id="content-row-template" type="text/x-handlebars-template">
+        <td>{{id}}</td>
+        <td>{{name}}</td > 
+        <td>{{formatDate startDate "short"}}</td>
+        <td>{{formatDate endDate "short"}}</td >
+		<td>
+			<a href="edit.html?id={{id }}"><span class="glyphicon glyphicon-edit"></span></a>
+		</td>
+		<td>
+			<a href="delete.html?id={{id }}"><span class="glyphicon glyphicon-trash"></span></a>
+		</td>
+</script>
+
+<script id="content-container-template" type="text/x-handlebasrs-template">
+			<table class="table table-striped table-bordered">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Name</th>
+						<th>Start Date</th>
+						<th>End Date</th>
+						<th colspan="2"></th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+</script>
 	<!-- ===================================Bootstrap core JavaScript ========================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>

@@ -1,20 +1,6 @@
 var contentModule = (function(module) {
-	ContentDetailView = Backbone.View.extend({
-		template : Handlebars.compile($('#content-row-template').html()),
-
-		render : function() {
-			var html = this.template(this.model.attributes);
-			this.$el.append(html);
-			return this;
-		}
-	});
-
-	// The Content List Table
-	ContentListView = Backbone.View.extend({
-		el : $("#searchResultsForm"),
-
-		template : Handlebars.compile($('#content-container-template').html()),
-
+	ContentForm = Backbone.View.extend({
+		el : '#searchResultsForm',
 		events : {
 			'click #validOnly' : 'toggleValidContent', // Valid Only Checkbox
 			'change .tags' : 'tagChanged',
@@ -24,28 +10,10 @@ var contentModule = (function(module) {
 			// Listen to "reset" events on model and render view if model is
 			// reset.
 			this.listenTo(this.collection, "reset", this.render);
-
-			// Render on initialize
-			this.render();
-		},
-
-		render : function() {
-			// Render the Headers
-			var header = this.template();
-			var contentContainer = this.$el.find('.contentContainer');
-			contentContainer.html(header);
-
-			// Render each row of collection.
-			this.collection.each(function(contentData) {
-				var contentView = new ContentDetailView({
-					el : this.$el.find('tbody'),
-					model : contentData
-				});
-				contentView.render();
-			}, this);
 		},
 
 		toggleValidContent : function(e) {
+			console.log('Checkbox : ' + e.currentTarget.checked);
 			if (e.currentTarget.checked) {
 				this.collection.findActive();
 			} else {
@@ -56,14 +24,63 @@ var contentModule = (function(module) {
 		tagChanged : function(e) {
 			this.collection.findByTag(e.currentTarget.value);
 		},
+
+		render : function() {
+			console.log('rendering table..');
+			contentListView = new ContentListView({
+				collection : this.collection
+			});
+			this.$el.find('#contentContainer').html(contentListView.render().el);
+			return this;
+		}
+	});
+
+	ContentDetailView = Backbone.View.extend({
+		template : Handlebars.compile($('#content-row-template').html()),
+		tagName : "tr",
+
+		render : function() {
+			console.log('rendering row');
+			var html = this.template(this.model.attributes);
+			this.$el.append(html);
+			return this;
+		}
+	});
+
+	// The Content List Table
+	ContentListView = Backbone.View.extend({
+		className : 'col-sm-12',
+
+		template : Handlebars.compile($('#content-container-template').html()),
+
+		render : function() {
+			console.log('rendering list view..');
+			// Render the Headers
+			var header = this.template();
+			this.$el.html(header);
+
+			// Render each row of collection.
+			this.collection.each(function(contentData) {
+				var contentView = new ContentDetailView({
+					model : contentData
+				});
+				this.append(contentView.render().el);
+			}, this.$el.find('tbody'));
+
+			return this;
+		}
 	});
 
 	// public
 	module.initialize = function() {
-		var contentListView = new ContentListView({collection: new ContentCollection()});
+		var contentCollection = new ContentCollection();
+		var contentForm = new ContentForm({
+			collection : contentCollection
+		});
+		return contentForm;
 	}
 
 	return module;
 })(contentModule || {});
 
-contentModule.initialize();
+var contentForm = contentModule.initialize();
