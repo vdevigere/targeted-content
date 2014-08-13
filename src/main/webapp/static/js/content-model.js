@@ -1,6 +1,6 @@
 var contentModule = (function(module) {
 	Content = Backbone.Model.extend({
-		url : '/targeted-content/api/content'
+		urlRoot : '/targeted-content/api/content'
 	});
 
 	ContentCollection = Backbone.Collection.extend({
