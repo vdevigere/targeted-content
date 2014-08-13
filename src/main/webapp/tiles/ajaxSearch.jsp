@@ -3,6 +3,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
+<script type="text/javascript">
+var initialContent = ${initialContent };
+</script>
 <div class="container" id="searchResultsForm">
 	<form class="form-horizontal row" role="form">
 		<div class="col-sm-12">

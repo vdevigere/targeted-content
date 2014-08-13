@@ -11,6 +11,11 @@ var contentModule = (function(module) {
 			// reset.
 			this.listenTo(this.collection, "reset", this.render);
 			this.listenTo(this.collection, "change", this.render);
+
+			// Load initial data
+			if (typeof initialContent !== 'undefined') {
+				this.collection.reset(initialContent);
+			}
 		},
 
 		toggleValidContent : function(e) {
@@ -25,12 +30,13 @@ var contentModule = (function(module) {
 			contentTableView = new ContentTableView({
 				collection : this.collection
 			});
-			this.$el.find('#contentContainer').html(contentTableView.render().el);
+			this.$el.find('#contentContainer').html(
+					contentTableView.render().el);
 			return this;
 		}
 	});
 
-	//View rendering the <tr> tag 
+	// View rendering the <tr> tag
 	ContentRowView = Backbone.View.extend({
 		template : Handlebars.compile($('#content-row-template').html()),
 		tagName : "tr",
@@ -42,18 +48,21 @@ var contentModule = (function(module) {
 		}
 	});
 
-	// The Content List Table. Renders the <table> tag and delegates to the view to render each row.
+	// The Content List Table. Renders the <table> tag and delegates to the view
+	// to render each row.
 	ContentTableView = Backbone.View.extend({
 		className : 'table table-striped table-bordered',
 		tagName : 'table',
-		headerTemplate : Handlebars.compile($('#content-container-template').html()),
+		headerTemplate : Handlebars.compile($('#content-container-template')
+				.html()),
 
 		render : function() {
 			// Render the Headers
 			var header = this.headerTemplate();
 			this.$el.html(header);
 
-			// Render each row of collection and append to the tBody of the table.
+			// Render each row of collection and append to the tBody of the
+			// table.
 			this.collection.each(function(contentData) {
 				var contentView = new ContentRowView({
 					model : contentData
@@ -67,6 +76,11 @@ var contentModule = (function(module) {
 
 	// public
 	module.initialize = function() {
+		var router = new Dashboard();
+		Backbone.history.start({
+			pushState : true,
+			root : "/targeted-content/page/dashboard/"
+		})
 		var contentCollection = new ContentCollection();
 		var contentForm = new ContentForm({
 			collection : contentCollection

@@ -64,10 +64,11 @@
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.4/handlebars.min.js"></script>
+	<script type="text/javascript" src="/static/targeted-content/js/handlebars-helpers.js"></script>	
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
 	<script type="text/javascript" src="/static/targeted-content/js/targeted-content.js"></script>
+	<script type="text/javascript" src="/static/targeted-content/js/content-route.js"></script>
 	<script type="text/javascript" src="/static/targeted-content/js/content-model.js"></script>
 	<script type="text/javascript" src="/static/targeted-content/js/content-view.js"></script>
-	<script type="text/javascript" src="/static/targeted-content/js/handlebars-helpers.js"></script>	
 </body>
 </html>

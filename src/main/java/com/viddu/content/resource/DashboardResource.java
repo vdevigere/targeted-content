@@ -19,6 +19,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viddu.content.PageModel;
 import com.viddu.content.bo.Content;
 import com.viddu.content.bo.ContentDb;
@@ -39,6 +41,9 @@ public class DashboardResource {
     @Inject
     private ContentDb contentDAO;
 
+    @Inject
+    private ObjectMapper mapper;
+
     @GET
     @Path("/new.html")
     public ModelView addNew() {
@@ -48,7 +53,9 @@ public class DashboardResource {
 
     @GET
     @Path("/search.html")
-    public ModelView search() {
+    public ModelView search() throws JsonProcessingException {
+        Collection<Content> allContent = contentDAO.findAllContent(null);
+        pageModel.put("initialContent", mapper.writeValueAsString(allContent));
         ModelView modelView = new ModelView("content.search.spa", pageModel);
         return modelView;
     }
