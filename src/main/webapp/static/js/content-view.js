@@ -10,15 +10,11 @@ var contentModule = (function(module) {
 			// Listen to "reset" events on model and render view if model is
 			// reset.
 			this.listenTo(this.collection, "reset", this.render);
+			this.listenTo(this.collection, "change", this.render);
 		},
 
 		toggleValidContent : function(e) {
-			console.log('Checkbox : ' + e.currentTarget.checked);
-			if (e.currentTarget.checked) {
-				this.collection.findActive();
-			} else {
-				this.collection.findAll();
-			}
+			this.collection.find(e.currentTarget.checked);
 		},
 
 		tagChanged : function(e) {
@@ -26,42 +22,40 @@ var contentModule = (function(module) {
 		},
 
 		render : function() {
-			console.log('rendering table..');
-			contentListView = new ContentListView({
+			contentTableView = new ContentTableView({
 				collection : this.collection
 			});
-			this.$el.find('#contentContainer').html(contentListView.render().el);
+			this.$el.find('#contentContainer').html(contentTableView.render().el);
 			return this;
 		}
 	});
 
-	ContentDetailView = Backbone.View.extend({
+	//View rendering the <tr> tag
+	ContentRowView = Backbone.View.extend({
 		template : Handlebars.compile($('#content-row-template').html()),
 		tagName : "tr",
 
 		render : function() {
-			console.log('rendering row');
 			var html = this.template(this.model.attributes);
 			this.$el.append(html);
 			return this;
 		}
 	});
 
-	// The Content List Table
-	ContentListView = Backbone.View.extend({
-		className : 'col-sm-12',
-
-		template : Handlebars.compile($('#content-container-template').html()),
+	// The Content List Table. Renders the <table> tag and delegates to the view to render each row.
+	ContentTableView = Backbone.View.extend({
+		className : 'table table-striped table-bordered',
+		tagName : 'table',
+		headerTemplate : Handlebars.compile($('#content-container-template').html()),
 
 		render : function() {
-			console.log('rendering list view..');
 			// Render the Headers
-			var header = this.template();
+			var header = this.headerTemplate();
 			this.$el.html(header);
 
-			// Render each row of collection.
+			// Render each row of collection and append to the tBody of the table.
 			this.collection.each(function(contentData) {
-				var contentView = new ContentDetailView({
+				var contentView = new ContentRowView({
 					model : contentData
 				});
 				this.append(contentView.render().el);

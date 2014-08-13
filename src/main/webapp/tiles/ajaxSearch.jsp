@@ -15,6 +15,7 @@
           <input type="checkbox" id="validOnly">
       </div>
 	</form>
-	<div class="row" id="contentContainer">
+	<div class="row">
+		<div class="col-sm-12" id="contentContainer"></div>
 	</div>
 </div>

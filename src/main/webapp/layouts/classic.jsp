@@ -43,7 +43,6 @@
 </script>
 
 <script id="content-container-template" type="text/x-handlebasrs-template">
-			<table class="table table-striped table-bordered">
 				<thead>
 					<tr>
 						<th>#</th>
@@ -55,7 +54,6 @@
 				</thead>
 				<tbody>
 				</tbody>
-			</table>
 </script>
 	<!-- ===================================Bootstrap core JavaScript ========================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->

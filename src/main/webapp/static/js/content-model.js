@@ -1,5 +1,7 @@
-var contentModule = (function(module){
-	Content = Backbone.Model.extend({});
+var contentModule = (function(module) {
+	Content = Backbone.Model.extend({
+		url : '/targeted-content/api/content'
+	});
 
 	ContentCollection = Backbone.Collection.extend({
 		model : Content,
@@ -28,14 +30,6 @@ var contentModule = (function(module){
 			return fullURL;
 		},
 
-		findActive : function() {
-			this.activeOnly = true;
-			this.fetch({
-				reset : true
-			});
-			return this;
-		},
-
 		findByTag : function(csvTagList) {
 			if (csvTagList) {
 				this.tags = csvTagList.split(',');
@@ -48,8 +42,8 @@ var contentModule = (function(module){
 			return this;
 		},
 
-		findAll : function() {
-			this.activeOnly = false;
+		find : function(activeOnly) {
+			this.activeOnly = activeOnly;
 			this.fetch({
 				reset : true
 			});
