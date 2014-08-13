@@ -20,9 +20,7 @@ var contentModule = (function(module) {
 			'change .tags' : 'tagChanged',
 		},
 
-		initialize : function(initialContent) {
-			this.collection = new ContentCollection(initialContent);
-
+		initialize : function() {
 			// Listen to "reset" events on model and render view if model is
 			// reset.
 			this.listenTo(this.collection, "reset", this.render);
@@ -60,21 +58,12 @@ var contentModule = (function(module) {
 		},
 	});
 
-	var contentListView;
 	// public
-	module.loadData = function() {
-		new ContentCollection().fetch().done(function(data) {
-			contentListView = new ContentListView(data);
-		});
-	}
-
-	module.getCollection = function(){
-		return contentListView.collection;
+	module.initialize = function() {
+		var contentListView = new ContentListView({collection: new ContentCollection()});
 	}
 
 	return module;
 })(contentModule || {});
 
-if ($('#searchResultsForm').length){
-	contentModule.loadData();
-}
+contentModule.initialize();
