@@ -2,8 +2,8 @@ var contentModule = (function(module) {
 	ContentForm = Backbone.View.extend({
 		el : '#searchResultsForm',
 		events : {
-			'click #validOnly' : 'toggleValidContent', // Valid Only Checkbox
-			'change .tags' : 'tagChanged',
+			'click #validOnly' : 'resetCollection', // Valid Only Checkbox
+			'change .tags' : 'resetCollection',
 		},
 
 		initialize : function() {
@@ -18,12 +18,17 @@ var contentModule = (function(module) {
 			}
 		},
 
-		toggleValidContent : function(e) {
-			this.collection.find(e.currentTarget.checked);
-		},
-
-		tagChanged : function(e) {
-			this.collection.findByTag(e.currentTarget.value);
+		resetCollection : function(e) {
+			var tags = (this.$el.find('.tags').val()) ? this.$el.find('.tags')
+					.val().split(',') : [];
+			var activeOnly = this.$el.find('#validOnly').is(':checked');
+			this.collection.fetch({
+				data : {
+					activeOnly : activeOnly,
+					tags : tags
+				},
+				reset : true
+			})
 		},
 
 		render : function() {

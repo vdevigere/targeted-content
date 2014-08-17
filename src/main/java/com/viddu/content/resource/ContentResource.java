@@ -99,7 +99,7 @@ public class ContentResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Collection<Content> getByTag(@QueryParam("tags") List<String> tags,
+    public Collection<Content> getByTag(@QueryParam("tags[]") List<String> tags,
             @QueryParam("activeOnly") boolean activeOnly) {
         if (activeOnly) {
             return contentDAO.filterActiveContent(tags);
