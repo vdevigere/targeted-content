@@ -72,7 +72,7 @@ public class ElasticSearchDb implements ContentDb {
         BoolFilterBuilder dateFilter = FilterBuilders.boolFilter().must(
                 FilterBuilders.rangeFilter("startDate").lte(now), FilterBuilders.rangeFilter("endDate").gte(now));
         if (tags != null && !tags.isEmpty()) {
-            dateFilter = dateFilter.should(FilterBuilders.termsFilter("target.tags", tags));
+            dateFilter = dateFilter.should(FilterBuilders.termsFilter("target.tags", tags).execution("and"));
         }
         return doSearch(dateFilter, 10, 0);
     }
@@ -107,7 +107,7 @@ public class ElasticSearchDb implements ContentDb {
     @Override
     public Collection<Content> findAllContent(Collection<String> tags) {
         if (tags != null && !tags.isEmpty()) {
-            return doSearch(FilterBuilders.termsFilter("target.tags", tags), 10, 0);
+            return doSearch(FilterBuilders.termsFilter("target.tags", tags).execution("and"), 10, 0);
         }
         return doSearch();
     }
