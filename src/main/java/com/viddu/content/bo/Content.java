@@ -53,7 +53,6 @@ public class Content {
         target.put("tags", tags);
     }
 
-    @SuppressWarnings("unchecked")
     @JsonIgnore
     public Collection<String> getTags() {
         return target.get("tags");

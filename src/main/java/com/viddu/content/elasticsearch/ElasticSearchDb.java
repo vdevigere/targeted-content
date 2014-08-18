@@ -53,9 +53,8 @@ public class ElasticSearchDb implements ContentDb {
 
     @Override
     public Content findContentById(String contentId) {
-        GetResponse response = client
-                .prepareGet(config.getString(INDEX_NAME), config.getString(TYPE_NAME), contentId).execute()
-                .actionGet();
+        GetResponse response = client.prepareGet(config.getString(INDEX_NAME), config.getString(TYPE_NAME), contentId)
+                .execute().actionGet();
         try {
             String contentJson = response.getSourceAsString();
             Content content = mapper.readValue(contentJson, Content.class);
@@ -75,7 +74,7 @@ public class ElasticSearchDb implements ContentDb {
         if (tags != null && !tags.isEmpty()) {
             dateFilter = dateFilter.should(FilterBuilders.termsFilter("target.tags", tags));
         }
-        return doSearch(dateFilter);
+        return doSearch(dateFilter, 10, 0);
     }
 
     @Override
@@ -88,8 +87,7 @@ public class ElasticSearchDb implements ContentDb {
                         .setSource(contentJson).execute().actionGet();
                 return response.getId();
             } else {
-                IndexResponse response = client
-                        .prepareIndex(config.getString(INDEX_NAME), config.getString(TYPE_NAME))
+                IndexResponse response = client.prepareIndex(config.getString(INDEX_NAME), config.getString(TYPE_NAME))
                         .setSource(contentJson).execute().actionGet();
                 return response.getId();
             }
@@ -101,34 +99,38 @@ public class ElasticSearchDb implements ContentDb {
 
     @Override
     public boolean deleteContentById(String id) {
-        DeleteResponse response = client
-                .prepareDelete(config.getString(INDEX_NAME), config.getString(TYPE_NAME), id).execute()
-                .actionGet();
+        DeleteResponse response = client.prepareDelete(config.getString(INDEX_NAME), config.getString(TYPE_NAME), id)
+                .execute().actionGet();
         return response.isFound();
     }
 
     @Override
     public Collection<Content> findAllContent(Collection<String> tags) {
         if (tags != null && !tags.isEmpty()) {
-            return doSearch(FilterBuilders.termsFilter("target.tags", tags));
+            return doSearch(FilterBuilders.termsFilter("target.tags", tags), 10, 0);
         }
         return doSearch();
     }
 
     protected Collection<Content> doSearch() {
-        return doSearch(null);
+        return doSearch(null, 10, 0);
     }
 
-    protected Collection<Content> doSearch(BaseFilterBuilder filter) {
+    protected Collection<Content> doSearch(BaseFilterBuilder filter, int size, int from) {
         logger.debug("Filter={}", filter);
         SearchRequestBuilder searchRequest = client.prepareSearch(config.getString(INDEX_NAME))
-                .setTypes(config.getString(TYPE_NAME)).addSort("startDate", SortOrder.DESC);
+                .setTypes(config.getString(TYPE_NAME)).addSort("startDate", SortOrder.DESC).setFrom(from).setSize(size);
         if (filter != null) {
             searchRequest.setPostFilter(filter);
         }
         SearchResponse response = searchRequest.execute().actionGet();
         SearchHits hits = response.getHits();
-        Set<Content> validContent = new LinkedHashSet<>();
+        long totalHits = hits.getTotalHits();
+        logger.debug("TotalHits={}, Size={}, From={}", totalHits, size, from);
+        final Collection<Content> validContent = new LinkedHashSet<>();
+        if (totalHits > from + size) {
+            validContent.addAll(doSearch(filter, size, from + size));
+        }
         hits.forEach(hit -> {
             String contentJson = hit.getSourceAsString();
             try {
