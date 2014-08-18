@@ -19,6 +19,8 @@ import org.elasticsearch.client.Client;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import com.viddu.content.bo.MenuItem;
 import com.viddu.content.resource.DashboardResource;
 import com.viddu.content.tiles.TilesMessageBodyWriter;
@@ -37,6 +39,10 @@ public class PageApplication extends Application {
         resources.add(TilesMessageBodyWriter.class);
         return resources;
     }
+
+//====================================================
+//                The CDI dependencies
+// ===================================================
 
     @Produces
     @PageModel
@@ -74,5 +80,11 @@ public class PageApplication extends Application {
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         return mapper;
+    }
+
+    @Produces
+    @Singleton
+    private Config getConfig(){
+        return ConfigFactory.load();
     }
 }

@@ -26,13 +26,21 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.typesafe.config.Config;
 import com.viddu.content.bo.Content;
 import com.viddu.content.bo.ContentDb;
 
 public class ElasticSearchDb implements ContentDb {
 
+    private static final String TYPE_NAME = "TYPE_NAME";
+
+    private static final String INDEX_NAME = "INDEX_NAME";
+
     @Inject
     private ObjectMapper mapper;
+
+    @Inject
+    private Config config;
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticSearchDb.class);
 
@@ -46,7 +54,7 @@ public class ElasticSearchDb implements ContentDb {
     @Override
     public Content findContentById(String contentId) {
         GetResponse response = client
-                .prepareGet(ElasticSearchConstants.INDEX_NAME, ElasticSearchConstants.TYPE_NAME, contentId).execute()
+                .prepareGet(config.getString(INDEX_NAME), config.getString(TYPE_NAME), contentId).execute()
                 .actionGet();
         try {
             String contentJson = response.getSourceAsString();
@@ -76,12 +84,12 @@ public class ElasticSearchDb implements ContentDb {
             String contentJson = mapper.writeValueAsString(content);
             if (id != null && !id.isEmpty()) {
                 IndexResponse response = client
-                        .prepareIndex(ElasticSearchConstants.INDEX_NAME, ElasticSearchConstants.TYPE_NAME, id)
+                        .prepareIndex(config.getString(INDEX_NAME), config.getString(TYPE_NAME), id)
                         .setSource(contentJson).execute().actionGet();
                 return response.getId();
             } else {
                 IndexResponse response = client
-                        .prepareIndex(ElasticSearchConstants.INDEX_NAME, ElasticSearchConstants.TYPE_NAME)
+                        .prepareIndex(config.getString(INDEX_NAME), config.getString(TYPE_NAME))
                         .setSource(contentJson).execute().actionGet();
                 return response.getId();
             }
@@ -94,7 +102,7 @@ public class ElasticSearchDb implements ContentDb {
     @Override
     public boolean deleteContentById(String id) {
         DeleteResponse response = client
-                .prepareDelete(ElasticSearchConstants.INDEX_NAME, ElasticSearchConstants.TYPE_NAME, id).execute()
+                .prepareDelete(config.getString(INDEX_NAME), config.getString(TYPE_NAME), id).execute()
                 .actionGet();
         return response.isFound();
     }
@@ -113,8 +121,8 @@ public class ElasticSearchDb implements ContentDb {
 
     protected Collection<Content> doSearch(BaseFilterBuilder filter) {
         logger.debug("Filter={}", filter);
-        SearchRequestBuilder searchRequest = client.prepareSearch(ElasticSearchConstants.INDEX_NAME)
-                .setTypes(ElasticSearchConstants.TYPE_NAME).addSort("startDate", SortOrder.DESC);
+        SearchRequestBuilder searchRequest = client.prepareSearch(config.getString(INDEX_NAME))
+                .setTypes(config.getString(TYPE_NAME)).addSort("startDate", SortOrder.DESC);
         if (filter != null) {
             searchRequest.setPostFilter(filter);
         }
