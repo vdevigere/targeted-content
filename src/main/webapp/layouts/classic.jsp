@@ -14,6 +14,8 @@
 <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.11.0/themes/flick/jquery-ui.css">
 <link href="/static/targeted-content/css/simple.css" rel="stylesheet">
 <link href="/static/tag-it/css/jquery.tagit.css" rel="stylesheet">
+<link href="/static/backgrid/lib/backgrid.min.css" rel="stylesheet">
+<link href="/static/backgrid/backgrid-paginator/backgrid-paginator.min.css" rel="stylesheet">
 </head>
 <body>
 	<div class="container">
@@ -28,33 +30,7 @@
 	</div>
 	<!-- /.container -->
 
-	<!--  ========================= HANDLEBARs TEMPLATES ============================ -->
-<script id="content-row-template" type="text/x-handlebars-template">
-        <td>{{id}}</td>
-        <td>{{name}}</td > 
-        <td>{{formatDate startDate "short"}}</td>
-        <td>{{formatDate endDate "short"}}</td >
-		<td>
-			<a href="edit.html?id={{id }}"><span class="glyphicon glyphicon-edit"></span></a>
-		</td>
-		<td>
-			<a href="delete.html?id={{id }}"><span class="glyphicon glyphicon-trash"></span></a>
-		</td>
-</script>
 
-<script id="content-container-template" type="text/x-handlebasrs-template">
-				<thead>
-					<tr>
-						<th>#</th>
-						<th>Name</th>
-						<th>Start Date</th>
-						<th>End Date</th>
-						<th colspan="2"></th>
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
-</script>
 	<!-- ===================================Bootstrap core JavaScript ========================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -63,6 +39,9 @@
 	<script type="text/javascript" src="/static/tag-it/js/tag-it.min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+	<script type="text/javascript" src="/static/backbone.paginator/lib/backbone.paginator.min.js"></script>
+	<script type="text/javascript" src="/static/backgrid/lib/backgrid.min.js"></script>
+	<script type="text/javascript" src="/static/backgrid/backgrid-paginator/backgrid-paginator.min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.4/handlebars.min.js"></script>
 	<script type="text/javascript" src="/static/targeted-content/js/handlebars-helpers.js"></script>	
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>

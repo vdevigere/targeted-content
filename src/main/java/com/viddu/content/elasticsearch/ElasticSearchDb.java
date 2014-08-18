@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.TimeZone;
 
 import javax.inject.Inject;
