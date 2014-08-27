@@ -56,7 +56,7 @@ public class DashboardResource {
     public ModelView search() throws JsonProcessingException {
         Collection<Content> allContent = contentDAO.findAllContent(null);
         pageModel.put("initialContent", mapper.writeValueAsString(allContent));
-        ModelView modelView = new ModelView("content.search.spa", pageModel);
+        ModelView modelView = new ModelView("content.search", pageModel);
         return modelView;
     }
 

@@ -24,77 +24,11 @@ var contentModule = (function(module) {
 		}
 	});
 
-	// BackGrid View
-	var columns = [ {
-		name : "id", // The key of the model attribute
-		label : "ID", // The name to display in the header
-		editable : false,
-		cell : "string"
-	}, {
-		name : "name",
-		label : "Name",
-		cell : "string"
-	}, {
-		name : "startDate",
-		label : "Start Date",
-		cell : "date"
-	}, {
-		name : "endDate",
-		label : "End Date",
-		cell : "date"
-	}, {
-		name : 'id',
-		label : "",
-		editable : false,
-		sortable : false,
-		cell : GlyphIconLink.extend({
-			uri : 'edit.html',
-			glyph : 'glyphicon-edit'
-		})
-	}, {
-		name : 'id',
-		label : "",
-		editable : false,
-		sortable : false,
-		cell : GlyphIconLink.extend({
-			uri : 'delete.html',
-			glyph : 'glyphicon-trash'
-		})
-	} ];
-
-	ContentForm = Backbone.View.extend({
-		el : '#searchResultsForm',
+	SearchForm = Backbone.View.extend({
+		el : '#searchForm',
 		events : {
 			'click #validOnly' : 'resetCollection', // Valid Only Checkbox
 			'change .tags' : 'resetCollection', // Tag input box
-		},
-
-		initialize : function() {
-			// Initialize the BackGrid instance
-			var grid = new Backgrid.Grid({
-				columns : columns,
-				collection : this.collection
-			});
-
-			var contentContainer = $('<div>', {
-				'class' : 'row'
-			}).append($('<div>', {
-				'class' : 'col-sm-12 contentContainer'
-			}));
-
-			contentContainer.html(grid.render().el);
-			this.$el.append(contentContainer);
-
-			var paginator = new Backgrid.Extension.Paginator({
-				collection : this.collection
-			});
-
-			this.$el.append(paginator.render().el);
-
-			// Load initial data
-			if (typeof initialContent !== 'undefined') {
-				this.collection.reset(initialContent);
-			}
 		},
 
 		resetCollection : function(e) {
@@ -119,10 +53,72 @@ var contentModule = (function(module) {
 			pushState : true,
 			root : "/targeted-content/page/dashboard/"
 		})
+
+		// BackGrid Columns
+		var columns = [ {
+			name : "id", // The key of the model attribute
+			label : "ID", // The name to display in the header
+			editable : false,
+			cell : "string"
+		}, {
+			name : "name",
+			label : "Name",
+			cell : "string"
+		}, {
+			name : "startDate",
+			label : "Start Date",
+			cell : "date"
+		}, {
+			name : "endDate",
+			label : "End Date",
+			cell : "date"
+		}, {
+			name : 'id',
+			label : "",
+			editable : false,
+			sortable : false,
+			cell : GlyphIconLink.extend({
+				uri : 'edit.html',
+				glyph : 'glyphicon-edit'
+			})
+		}, {
+			name : 'id',
+			label : "",
+			editable : false,
+			sortable : false,
+			cell : GlyphIconLink.extend({
+				uri : 'delete.html',
+				glyph : 'glyphicon-trash'
+			})
+		} ];
+
 		var contentCollection = new ContentCollection();
-		var contentForm = new ContentForm({
+
+		// Initialize the Content Form
+		var contentForm = new SearchForm({
 			collection : contentCollection
 		});
+
+		// Initialize the BackGrid instance
+		var grid = new Backgrid.Grid({
+			columns : columns,
+			collection : contentCollection
+		});
+
+		// Initialize the Pager
+		var paginator = new Backgrid.Extension.Paginator({
+			collection : contentCollection
+		});
+
+		$('#contentGrid').append(grid.render().el);
+		$('#contentGrid').append(paginator.render().el);
+
+		if (typeof initialContent !== 'undefined') {
+			contentCollection.fetch({
+				reset : true
+			});
+		}
+
 		return contentForm;
 	}
 
