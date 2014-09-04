@@ -30,6 +30,8 @@ import com.viddu.content.bo.ContentDb;
 
 public class ElasticSearchDb implements ContentDb {
 
+    private static final String PAGE_SIZE = "PAGE_SIZE";
+
     private static final String TYPE_NAME = "TYPE_NAME";
 
     private static final String INDEX_NAME = "INDEX_NAME";
@@ -72,7 +74,7 @@ public class ElasticSearchDb implements ContentDb {
         if (tags != null && !tags.isEmpty()) {
             dateFilter = dateFilter.should(FilterBuilders.termsFilter("target.tags", tags).execution("and"));
         }
-        return doSearch(dateFilter, 10, 0);
+        return doSearch(dateFilter, config.getInt(PAGE_SIZE), 0);
     }
 
     @Override
@@ -105,17 +107,18 @@ public class ElasticSearchDb implements ContentDb {
     @Override
     public Collection<Content> findAllContent(Collection<String> tags) {
         if (tags != null && !tags.isEmpty()) {
-            return doSearch(FilterBuilders.termsFilter("target.tags", tags).execution("and"), 10, 0);
+            return doSearch(FilterBuilders.termsFilter("target.tags", tags).execution("and"), config.getInt(PAGE_SIZE), 0);
         }
         return doSearch();
     }
 
     protected Collection<Content> doSearch() {
-        return doSearch(null, 10, 0);
+        return doSearch(null, config.getInt(PAGE_SIZE), 0);
     }
 
     protected Collection<Content> doSearch(BaseFilterBuilder filter, int size, int from) {
         logger.debug("Filter={}", filter);
+        logger.debug("Page Size={}, From={}",size, from);
         SearchRequestBuilder searchRequest = client.prepareSearch(config.getString(INDEX_NAME))
                 .setTypes(config.getString(TYPE_NAME)).setFrom(from).setSize(size);
         if (filter != null) {
