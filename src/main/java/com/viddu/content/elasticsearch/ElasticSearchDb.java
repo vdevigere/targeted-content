@@ -19,7 +19,6 @@ import org.elasticsearch.index.query.BaseFilterBuilder;
 import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,7 +117,7 @@ public class ElasticSearchDb implements ContentDb {
     protected Collection<Content> doSearch(BaseFilterBuilder filter, int size, int from) {
         logger.debug("Filter={}", filter);
         SearchRequestBuilder searchRequest = client.prepareSearch(config.getString(INDEX_NAME))
-                .setTypes(config.getString(TYPE_NAME)).addSort("startDate", SortOrder.DESC).setFrom(from).setSize(size);
+                .setTypes(config.getString(TYPE_NAME)).setFrom(from).setSize(size);
         if (filter != null) {
             searchRequest.setPostFilter(filter);
         }
