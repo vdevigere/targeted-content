@@ -65,11 +65,10 @@ var contentModule = (function(module) {
 		},
 
 		render : function() {
-			console.log(this.collection);
+			console.log('rendering tag cloud');
 			var tagList = '<canvas width="300" height="300" id="myCanvas" style=""></canvas><div id="tags" style="display:none;"><ul>';
 			this.collection.each(function(val) {
-				tagList += '<li><a href="#">' + val.attributes.name + '('
-						+ val.attributes.size + ')</a></li>';
+				tagList += '<li><a href="#" data-weight="'+val.attributes.size+'">' + val.attributes.name + '</a></li>';
 			});
 			tagList+='</ul></div>';
 			this.$el.html(tagList);
@@ -78,7 +77,10 @@ var contentModule = (function(module) {
 				outlineColour : '#ff00ff',
 				reverse : true,
 				depth : 0.8,
-				maxSpeed : 0.05
+				maxSpeed : 0.05,
+				weight : true,
+				weightFrom : 'data-weight',
+				weightSize : 10
 			}, 'tags');
 			return this;
 		}
