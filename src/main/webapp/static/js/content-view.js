@@ -31,6 +31,10 @@ var contentModule = (function(module) {
 			'change .tags' : 'resetCollection', // Tag input box
 		},
 
+		initialize : function(options) {
+			this.tagCloud = options.tagCloud;
+		},
+
 		resetCollection : function(e) {
 			var tags = (this.$el.find('.tags').val()) ? this.$el.find('.tags')
 					.val().split(',') : [];
@@ -41,9 +45,43 @@ var contentModule = (function(module) {
 					tags : tags
 				},
 				reset : true
-			})
+			});
+			this.tagCloud.fetch({
+				data : {
+					activeOnly : activeOnly,
+					tags : tags
+				},
+				reset : true
+			});
 		},
 
+	});
+
+	TagCloud = Backbone.View.extend({
+		initialize : function() {
+			this.listenTo(this.collection, "reset", this.render);
+			this.listenTo(this.collection, "change", this.render);
+			this.listenTo(this.collection, "add", this.render);
+		},
+
+		render : function() {
+			console.log(this.collection);
+			var tagList = '<canvas width="300" height="300" id="myCanvas" style=""></canvas><div id="tags" style="display:none;"><ul>';
+			this.collection.each(function(val) {
+				tagList += '<li><a href="#">' + val.attributes.name + '('
+						+ val.attributes.size + ')</a></li>';
+			});
+			tagList+='</ul></div>';
+			this.$el.html(tagList);
+			$('#myCanvas').tagcanvas({
+				textColour : '#ff0000',
+				outlineColour : '#ff00ff',
+				reverse : true,
+				depth : 0.8,
+				maxSpeed : 0.05
+			}, 'tags');
+			return this;
+		}
 	});
 
 	// public
@@ -94,9 +132,12 @@ var contentModule = (function(module) {
 
 		var contentCollection = new ContentCollection();
 
+		var tagCloudCollection = new TagCloudCollection();
+
 		// Initialize the Content Form
 		var contentForm = new SearchForm({
-			collection : contentCollection
+			collection : contentCollection,
+			tagCloud : tagCloudCollection
 		});
 
 		// Initialize the BackGrid instance
@@ -110,14 +151,21 @@ var contentModule = (function(module) {
 			collection : contentCollection
 		});
 
+		var tagCloudView = new TagCloud({
+			collection : tagCloudCollection
+		});
+
 		$('#contentGrid').append(grid.render().el);
 		$('#contentGrid').append(paginator.render().el);
+		$('#tagCloud').append(tagCloudView.render().el);
 
-		if (typeof initialContent !== 'undefined') {
-			contentCollection.fetch({
-				reset : true
-			});
-		}
+		contentCollection.fetch({
+			reset : true
+		});
+
+		tagCloudCollection.fetch({
+			reset : true
+		});
 
 		return contentForm;
 	}

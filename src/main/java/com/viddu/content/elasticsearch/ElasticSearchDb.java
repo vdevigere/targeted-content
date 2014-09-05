@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.TimeZone;
 
 import javax.inject.Inject;
@@ -19,6 +20,8 @@ import org.elasticsearch.index.query.BaseFilterBuilder;
 import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.typesafe.config.Config;
 import com.viddu.content.bo.Content;
 import com.viddu.content.bo.ContentDb;
+import com.viddu.content.bo.TagCloudItem;
 
 public class ElasticSearchDb implements ContentDb {
 
@@ -107,7 +111,8 @@ public class ElasticSearchDb implements ContentDb {
     @Override
     public Collection<Content> findAllContent(Collection<String> tags) {
         if (tags != null && !tags.isEmpty()) {
-            return doSearch(FilterBuilders.termsFilter("target.tags", tags).execution("and"), config.getInt(PAGE_SIZE), 0);
+            return doSearch(FilterBuilders.termsFilter("target.tags", tags).execution("and"), config.getInt(PAGE_SIZE),
+                    0);
         }
         return doSearch();
     }
@@ -118,7 +123,7 @@ public class ElasticSearchDb implements ContentDb {
 
     protected Collection<Content> doSearch(BaseFilterBuilder filter, int size, int from) {
         logger.debug("Filter={}", filter);
-        logger.debug("Page Size={}, From={}",size, from);
+        logger.debug("Page Size={}, From={}", size, from);
         SearchRequestBuilder searchRequest = client.prepareSearch(config.getString(INDEX_NAME))
                 .setTypes(config.getString(TYPE_NAME)).setFrom(from).setSize(size);
         if (filter != null) {
@@ -144,5 +149,19 @@ public class ElasticSearchDb implements ContentDb {
             logger.debug("Hit:{}", contentJson);
         });
         return validContent;
+    }
+
+    @Override
+    public Collection<TagCloudItem> getTagCloud() {
+        Set<TagCloudItem> tagCloud = new LinkedHashSet<>();
+        SearchResponse response = client.prepareSearch(config.getString(INDEX_NAME))
+                .setTypes(config.getString(TYPE_NAME))
+                .addAggregation(new TermsBuilder("TAG_COUNT").field("target.tags")).execute().actionGet();
+        Terms agg = response.getAggregations().get("TAG_COUNT");
+        Collection<Terms.Bucket> buckets = agg.getBuckets();
+        for (Terms.Bucket bucket : buckets) {
+            tagCloud.add(new TagCloudItem(bucket.getKey(), bucket.getDocCount()));
+        }
+        return tagCloud;
     }
 }

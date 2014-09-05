@@ -10,5 +10,11 @@ var contentModule = (function(module) {
 		mode : "client" // page entirely on the client side
 	});
 
+	TagCloudItem = Backbone.Model.extend();
+
+	TagCloudCollection = Backbone.PageableCollection.extend({
+		model : TagCloudItem,
+		url : '/targeted-content/api/tagCloud'
+	});
 	return module;
 })(contentModule || {});

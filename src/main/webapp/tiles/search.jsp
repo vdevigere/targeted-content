@@ -6,7 +6,6 @@
 <script type="text/javascript">
 	var initialContent =${initialContent };
 </script>
-
 <div class="container">
 	<div class="row">
 		<div class="col-sm-12" id="searchForm">
@@ -25,5 +24,11 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-12" id="contentGrid"></div>
+	</div>
+	<div class="row">
+		<div class="col-sm-4" ></div>
+		<div class="col-sm-4" id="tagCloud">		
+		</div>
+		<div class="col-sm-4"></div>
 	</div>
 </div>

@@ -14,4 +14,6 @@ public interface ContentDb {
 
     public boolean deleteContentById(String id);
 
+    public Collection<TagCloudItem> getTagCloud();
+
 }

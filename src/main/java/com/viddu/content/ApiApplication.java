@@ -8,6 +8,7 @@ import javax.ws.rs.core.Application;
 
 import com.viddu.content.resource.CORSFilter;
 import com.viddu.content.resource.ContentResource;
+import com.viddu.content.resource.TagCloudResource;
 
 @ApplicationPath("/api")
 public class ApiApplication extends Application {
@@ -16,6 +17,7 @@ public class ApiApplication extends Application {
     public Set<Class<?>> getClasses() {
         Set<Class<?>> resources = new LinkedHashSet<Class<?>>();
         resources.add(ContentResource.class);
+        resources.add(TagCloudResource.class);
         resources.add(CORSFilter.class);
         return resources;
     }
