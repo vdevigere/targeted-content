@@ -13,5 +13,7 @@ public interface ContentDb<T> {
 
     public abstract Collection<Content<T>> search(Collection<String> tags, Boolean activeOnly);
 
+    public abstract Collection<Content<T>> search(Collection<String> tags, Boolean activeOnly, Integer size, Integer from);
+
     public Collection<TagCloudItem> tagCloud(List<String> tags, boolean activeOnly);
 }

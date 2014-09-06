@@ -16,18 +16,19 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.index.query.BaseFilterBuilder;
 import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.filter.Filter;
 import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.elasticsearch.search.aggregations.bucket.filter.Filter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -38,8 +39,6 @@ import com.viddu.content.bo.ContentDb;
 import com.viddu.content.bo.TagCloudItem;
 
 public class ElasticSearchDb<T> implements ContentDb<T> {
-
-    private static final String PAGE_SIZE = "PAGE_SIZE";
 
     private static final String TYPE_NAME = "TYPE_NAME";
 
@@ -105,28 +104,8 @@ public class ElasticSearchDb<T> implements ContentDb<T> {
         return null;
     }
 
-    protected Collection<Content<T>> doSearch(BoolFilterBuilder filter, int size, int from) {
-        logger.debug("Filter={}", filter);
-        logger.debug("Page Size={}, From={}", size, from);
-        SearchRequestBuilder searchRequest = client.prepareSearch(config.getString(INDEX_NAME))
-                .setTypes(config.getString(TYPE_NAME)).setFrom(from).setSize(size);
-        if (filter.hasClauses()) {
-            searchRequest.setPostFilter(filter);
-        }
-
-        // Execute Search
-        SearchResponse response = searchRequest.execute().actionGet();
-
-        // If there is more data, recursively fetch it.
-        SearchHits hits = response.getHits();
-        long totalHits = hits.getTotalHits();
-        logger.debug("TotalHits={}, Size={}, From={}", totalHits, size, from);
+    private Collection<Content<T>> buildSearchResponse(SearchHits hits) {
         final Collection<Content<T>> validContent = new LinkedHashSet<>();
-
-        if (totalHits > from + size) {
-            validContent.addAll(doSearch(filter, size, from + size));
-        }
-
         hits.forEach(hit -> {
             String contentJson = hit.getSourceAsString();
             logger.debug("Hit:{}", contentJson);
@@ -142,47 +121,59 @@ public class ElasticSearchDb<T> implements ContentDb<T> {
     }
 
     @Override
+    public Collection<Content<T>> search(Collection<String> tags, Boolean activeOnly, Integer size, Integer from) {
+        BaseFilterBuilder filter = buildFilter(tags, activeOnly);
+        SearchRequestBuilder searchRequest = client.prepareSearch(config.getString(INDEX_NAME)).setTypes(
+                config.getString(TYPE_NAME));
+        searchRequest.setPostFilter(filter).setFrom(from).setSize(size);
+        logger.debug("Search Request={}", searchRequest);
+
+        // Execute Search
+        SearchResponse response = searchRequest.execute().actionGet();
+        SearchHits hits = response.getHits();
+        return buildSearchResponse(hits);
+    }
+
+    @Override
     public Collection<Content<T>> search(Collection<String> tags, Boolean activeOnly) {
-        BoolFilterBuilder boolFilter = FilterBuilders.boolFilter();
-        if (activeOnly) {
-            Date now = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
-            boolFilter = boolFilter.must(FilterBuilders.rangeFilter("startDate").lte(now),
-                    FilterBuilders.rangeFilter("endDate").gte(now));
+        BaseFilterBuilder filter = buildFilter(tags, activeOnly);
+        SearchRequestBuilder searchRequest = client.prepareSearch(config.getString(INDEX_NAME)).setTypes(
+                config.getString(TYPE_NAME));
+        searchRequest.setPostFilter(filter).setScroll(TimeValue.timeValueMinutes(1L)).setSearchType(SearchType.SCAN);
+        logger.debug("Search Request={}", searchRequest);
+        // Execute Search
+        Collection<Content<T>> searchResults = new LinkedList<>();
+        SearchResponse response = searchRequest.execute().actionGet();
+        while (true) {
+            response = client.prepareSearchScroll(response.getScrollId()).setScroll(TimeValue.timeValueMinutes(1L))
+                    .execute().actionGet();
+            searchResults.addAll(buildSearchResponse(response.getHits()));
+            // Break condition: No hits are returned
+            if (response.getHits().getHits().length == 0) {
+                break;
+            }
         }
 
-        if (tags != null && !tags.isEmpty()) {
-            boolFilter = boolFilter.should(FilterBuilders.termsFilter("target.tags", tags).execution("and"));
-        }
-        return doSearch(boolFilter, config.getInt(PAGE_SIZE), 0);
+        return searchResults;
     }
 
     @Override
     public Collection<TagCloudItem> tagCloud(List<String> tags, boolean activeOnly) {
+        // Build Filter
+        BaseFilterBuilder filter = buildFilter(tags, activeOnly);
+
+        // Build Aggregation
+        FilterAggregationBuilder filterAggregation = new FilterAggregationBuilder("FILTERED_AGG").filter(filter)
+                .subAggregation(new TermsBuilder("TAG_COUNT").field("target.tags"));
+
         List<TagCloudItem> tagCloud = new LinkedList<TagCloudItem>();
+
         SearchRequestBuilder searchRequest = client.prepareSearch(config.getString(INDEX_NAME)).setTypes(
                 config.getString(TYPE_NAME));
 
-        BoolFilterBuilder boolFilter = FilterBuilders.boolFilter();
-        if (activeOnly) {
-            Date now = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
-            boolFilter = boolFilter.must(FilterBuilders.rangeFilter("startDate").lte(now),
-                    FilterBuilders.rangeFilter("endDate").gte(now));
-        }
-
-        if (tags != null && !tags.isEmpty()) {
-            boolFilter = boolFilter.should(FilterBuilders.termsFilter("target.tags", tags).execution("and"));
-        }
-
-        FilterAggregationBuilder filterAggregation = new FilterAggregationBuilder("FILTERED_AGG");
-        if (boolFilter.hasClauses()) {
-            filterAggregation.filter(boolFilter);
-        } else {
-            filterAggregation.filter(FilterBuilders.matchAllFilter());
-        }
-        filterAggregation.subAggregation(new TermsBuilder("TAG_COUNT").field("target.tags"));
-        searchRequest.addAggregation(filterAggregation);
-
+        searchRequest.addAggregation(filterAggregation).setSearchType(SearchType.COUNT);
         logger.debug("Search Request={}", searchRequest);
+
         // Execute Search
         SearchResponse response = searchRequest.execute().actionGet();
 
@@ -193,5 +184,24 @@ public class ElasticSearchDb<T> implements ContentDb<T> {
             tagCloud.add(new TagCloudItem(bucket.getKey(), bucket.getDocCount()));
         });
         return tagCloud;
+    }
+
+    private BaseFilterBuilder buildFilter(Collection<String> tags, boolean activeOnly) {
+        BoolFilterBuilder boolFilter = FilterBuilders.boolFilter();
+        if (activeOnly) {
+            Date now = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
+            boolFilter = boolFilter.must(FilterBuilders.rangeFilter("startDate").lte(now),
+                    FilterBuilders.rangeFilter("endDate").gte(now));
+        }
+
+        if (tags != null && !tags.isEmpty()) {
+            boolFilter = boolFilter.should(FilterBuilders.termsFilter("target.tags", tags).execution("and"));
+        }
+
+        if (!boolFilter.hasClauses()) {
+            return FilterBuilders.matchAllFilter();
+        } else {
+            return boolFilter;
+        }
     }
 }
