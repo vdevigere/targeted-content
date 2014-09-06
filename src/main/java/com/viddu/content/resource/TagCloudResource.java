@@ -10,7 +10,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import com.viddu.content.bo.Content;
 import com.viddu.content.bo.ContentDb;
 import com.viddu.content.bo.TagCloudItem;
 
@@ -22,7 +21,7 @@ public class TagCloudResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Collection<Content<TagCloudItem>> getTagCloud(@QueryParam("tags[]") List<String> tags,
+    public Collection<TagCloudItem> getTagCloud(@QueryParam("tags[]") List<String> tags,
             @QueryParam("activeOnly") boolean activeOnly){
         return contentDb.tagCloud(tags, activeOnly);
     }

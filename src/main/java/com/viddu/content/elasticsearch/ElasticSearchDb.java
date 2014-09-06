@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -20,8 +21,13 @@ import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.elasticsearch.search.aggregations.bucket.filter.Filter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -99,8 +105,7 @@ public class ElasticSearchDb<T> implements ContentDb<T> {
         return null;
     }
 
-    protected Collection<Content<T>> doSearch(BoolFilterBuilder filter, AbstractAggregationBuilder aggregation,
-            int size, int from) {
+    protected Collection<Content<T>> doSearch(BoolFilterBuilder filter, int size, int from) {
         logger.debug("Filter={}", filter);
         logger.debug("Page Size={}, From={}", size, from);
         SearchRequestBuilder searchRequest = client.prepareSearch(config.getString(INDEX_NAME))
@@ -109,9 +114,6 @@ public class ElasticSearchDb<T> implements ContentDb<T> {
             searchRequest.setPostFilter(filter);
         }
 
-        if (aggregation != null) {
-            searchRequest.addAggregation(aggregation);
-        }
         // Execute Search
         SearchResponse response = searchRequest.execute().actionGet();
 
@@ -122,7 +124,7 @@ public class ElasticSearchDb<T> implements ContentDb<T> {
         final Collection<Content<T>> validContent = new LinkedHashSet<>();
 
         if (totalHits > from + size) {
-            validContent.addAll(doSearch(filter, aggregation, size, from + size));
+            validContent.addAll(doSearch(filter, size, from + size));
         }
 
         hits.forEach(hit -> {
@@ -151,12 +153,45 @@ public class ElasticSearchDb<T> implements ContentDb<T> {
         if (tags != null && !tags.isEmpty()) {
             boolFilter = boolFilter.should(FilterBuilders.termsFilter("target.tags", tags).execution("and"));
         }
-        return doSearch(boolFilter, null, config.getInt(PAGE_SIZE), 0);
+        return doSearch(boolFilter, config.getInt(PAGE_SIZE), 0);
     }
 
     @Override
-    public Collection<Content<TagCloudItem>> tagCloud(List<String> tags, boolean activeOnly) {
-        // TODO Auto-generated method stub
-        return null;
+    public Collection<TagCloudItem> tagCloud(List<String> tags, boolean activeOnly) {
+        List<TagCloudItem> tagCloud = new LinkedList<TagCloudItem>();
+        SearchRequestBuilder searchRequest = client.prepareSearch(config.getString(INDEX_NAME)).setTypes(
+                config.getString(TYPE_NAME));
+
+        BoolFilterBuilder boolFilter = FilterBuilders.boolFilter();
+        if (activeOnly) {
+            Date now = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
+            boolFilter = boolFilter.must(FilterBuilders.rangeFilter("startDate").lte(now),
+                    FilterBuilders.rangeFilter("endDate").gte(now));
+        }
+
+        if (tags != null && !tags.isEmpty()) {
+            boolFilter = boolFilter.should(FilterBuilders.termsFilter("target.tags", tags).execution("and"));
+        }
+
+        FilterAggregationBuilder filterAggregation = new FilterAggregationBuilder("FILTERED_AGG");
+        if (boolFilter.hasClauses()) {
+            filterAggregation.filter(boolFilter);
+        } else {
+            filterAggregation.filter(FilterBuilders.matchAllFilter());
+        }
+        filterAggregation.subAggregation(new TermsBuilder("TAG_COUNT").field("target.tags"));
+        searchRequest.addAggregation(filterAggregation);
+
+        logger.debug("Search Request={}", searchRequest);
+        // Execute Search
+        SearchResponse response = searchRequest.execute().actionGet();
+
+        Filter filteredAgg = response.getAggregations().get("FILTERED_AGG");
+        Terms termsAgg = filteredAgg.getAggregations().get("TAG_COUNT");
+
+        termsAgg.getBuckets().forEach(bucket -> {
+            tagCloud.add(new TagCloudItem(bucket.getKey(), bucket.getDocCount()));
+        });
+        return tagCloud;
     }
 }
