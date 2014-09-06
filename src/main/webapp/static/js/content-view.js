@@ -57,7 +57,15 @@ var contentModule = (function(module) {
 
 	});
 
-	TagCloud = Backbone.View.extend({
+	TagCloudView = Backbone.View.extend({
+		events : {
+			'click a' : 'filterByTag'
+		},
+
+		filterByTag : function(e) {
+			console.log($(e.currentTarget).data('tag'));
+		},
+
 		initialize : function() {
 			this.listenTo(this.collection, "reset", this.render);
 			this.listenTo(this.collection, "change", this.render);
@@ -66,22 +74,15 @@ var contentModule = (function(module) {
 
 		render : function() {
 			console.log('rendering tag cloud');
-			var tagList = '<canvas width="300" height="300" id="myCanvas" style=""></canvas><div id="tags" style="display:none;"><ul>';
+			var tagList = '<div id="tags"><ul>';
 			this.collection.each(function(val) {
-				tagList += '<li><a href="#" data-weight="'+val.attributes.size+'">' + val.attributes.name + '</a></li>';
+				tagList += '<li><a href="#" data-weight="'
+						+ val.attributes.weight + '" data-tag="'
+						+ val.attributes.name + '">' + val.attributes.name
+						+ ' (' + val.attributes.weight + ')</a></li>';
 			});
-			tagList+='</ul></div>';
+			tagList += '</ul></div>';
 			this.$el.html(tagList);
-			$('#myCanvas').tagcanvas({
-				textColour : '#ff0000',
-				outlineColour : '#ff00ff',
-				reverse : true,
-				depth : 0.8,
-				maxSpeed : 0.05,
-				weight : true,
-				weightFrom : 'data-weight',
-				weightSize : 10
-			}, 'tags');
 			return this;
 		}
 	});
@@ -153,7 +154,7 @@ var contentModule = (function(module) {
 			collection : contentCollection
 		});
 
-		var tagCloudView = new TagCloud({
+		var tagCloudView = new TagCloudView({
 			collection : tagCloudCollection
 		});
 

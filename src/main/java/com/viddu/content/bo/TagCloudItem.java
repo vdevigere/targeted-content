@@ -2,21 +2,20 @@ package com.viddu.content.bo;
 
 public class TagCloudItem {
     private final String name;
-    private final Long size;
+    private final Long weight;
 
-    public TagCloudItem(String name, Long size) {
+    public TagCloudItem(String name, Long weight) {
         super();
         this.name = name;
-        this.size = size;
+        this.weight = weight;
     }
 
     public String getName() {
         return name;
     }
 
-    public Long getSize() {
-        return size;
+    public Long getWeight() {
+        return weight;
     }
-
 
 }
