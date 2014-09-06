@@ -10,7 +10,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class Content {
+public class Content<T> {
 
     private final String name;
 
@@ -18,7 +18,7 @@ public class Content {
 
     private final Map<String, Collection<String>> target;
 
-    private final Set<ContentData> contentDataSet;
+    private final Set<T> contentDataSet;
 
     private final Date startDate, endDate;
 
@@ -45,7 +45,7 @@ public class Content {
         return target;
     }
 
-    public void addContentData(ContentData contentData) {
+    public void addContentData(T contentData) {
         contentDataSet.add(contentData);
     }
 
@@ -58,7 +58,7 @@ public class Content {
         return target.get("tags");
     }
 
-    public Set<ContentData> getContentDataSet() {
+    public Set<T> getContentDataSet() {
         return contentDataSet;
     }
 

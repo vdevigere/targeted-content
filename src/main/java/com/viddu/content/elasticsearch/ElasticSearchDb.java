@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.TimeZone;
 
 import javax.inject.Inject;
@@ -16,23 +16,22 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.index.query.BaseFilterBuilder;
 import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
+import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.typesafe.config.Config;
 import com.viddu.content.bo.Content;
 import com.viddu.content.bo.ContentDb;
 import com.viddu.content.bo.TagCloudItem;
 
-public class ElasticSearchDb implements ContentDb {
+public class ElasticSearchDb<T> implements ContentDb<T> {
 
     private static final String PAGE_SIZE = "PAGE_SIZE";
 
@@ -50,18 +49,21 @@ public class ElasticSearchDb implements ContentDb {
 
     private final Client client;
 
+    private TypeReference<Content<T>> typeRef = new TypeReference<Content<T>>() {
+    };
+
     @Inject
     public ElasticSearchDb(Client client) {
         this.client = client;
     }
 
     @Override
-    public Content findContentById(String contentId) {
+    public Content<T> findContentById(String contentId) {
         GetResponse response = client.prepareGet(config.getString(INDEX_NAME), config.getString(TYPE_NAME), contentId)
                 .execute().actionGet();
         try {
             String contentJson = response.getSourceAsString();
-            Content content = mapper.readValue(contentJson, Content.class);
+            Content<T> content = mapper.readValue(contentJson, typeRef);
             content.setId(response.getId());
             return content;
         } catch (IOException e) {
@@ -71,18 +73,14 @@ public class ElasticSearchDb implements ContentDb {
     }
 
     @Override
-    public Collection<Content> filterActiveContent(Collection<String> tags) {
-        Date now = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
-        BoolFilterBuilder dateFilter = FilterBuilders.boolFilter().must(
-                FilterBuilders.rangeFilter("startDate").lte(now), FilterBuilders.rangeFilter("endDate").gte(now));
-        if (tags != null && !tags.isEmpty()) {
-            dateFilter = dateFilter.should(FilterBuilders.termsFilter("target.tags", tags).execution("and"));
-        }
-        return doSearch(dateFilter, config.getInt(PAGE_SIZE), 0);
+    public boolean deleteContentById(String id) {
+        DeleteResponse response = client.prepareDelete(config.getString(INDEX_NAME), config.getString(TYPE_NAME), id)
+                .execute().actionGet();
+        return response.isFound();
     }
 
     @Override
-    public String saveUpdate(Content content, String id) {
+    public String saveUpdate(Content<T> content, String id) {
         try {
             String contentJson = mapper.writeValueAsString(content);
             if (id != null && !id.isEmpty()) {
@@ -101,67 +99,64 @@ public class ElasticSearchDb implements ContentDb {
         return null;
     }
 
-    @Override
-    public boolean deleteContentById(String id) {
-        DeleteResponse response = client.prepareDelete(config.getString(INDEX_NAME), config.getString(TYPE_NAME), id)
-                .execute().actionGet();
-        return response.isFound();
-    }
-
-    @Override
-    public Collection<Content> findAllContent(Collection<String> tags) {
-        if (tags != null && !tags.isEmpty()) {
-            return doSearch(FilterBuilders.termsFilter("target.tags", tags).execution("and"), config.getInt(PAGE_SIZE),
-                    0);
-        }
-        return doSearch();
-    }
-
-    protected Collection<Content> doSearch() {
-        return doSearch(null, config.getInt(PAGE_SIZE), 0);
-    }
-
-    protected Collection<Content> doSearch(BaseFilterBuilder filter, int size, int from) {
+    protected Collection<Content<T>> doSearch(BoolFilterBuilder filter, AbstractAggregationBuilder aggregation,
+            int size, int from) {
         logger.debug("Filter={}", filter);
         logger.debug("Page Size={}, From={}", size, from);
         SearchRequestBuilder searchRequest = client.prepareSearch(config.getString(INDEX_NAME))
                 .setTypes(config.getString(TYPE_NAME)).setFrom(from).setSize(size);
-        if (filter != null) {
+        if (filter.hasClauses()) {
             searchRequest.setPostFilter(filter);
         }
+
+        if (aggregation != null) {
+            searchRequest.addAggregation(aggregation);
+        }
+        // Execute Search
         SearchResponse response = searchRequest.execute().actionGet();
+
+        // If there is more data, recursively fetch it.
         SearchHits hits = response.getHits();
         long totalHits = hits.getTotalHits();
         logger.debug("TotalHits={}, Size={}, From={}", totalHits, size, from);
-        final Collection<Content> validContent = new LinkedHashSet<>();
+        final Collection<Content<T>> validContent = new LinkedHashSet<>();
+
         if (totalHits > from + size) {
-            validContent.addAll(doSearch(filter, size, from + size));
+            validContent.addAll(doSearch(filter, aggregation, size, from + size));
         }
+
         hits.forEach(hit -> {
             String contentJson = hit.getSourceAsString();
+            logger.debug("Hit:{}", contentJson);
             try {
-                Content content = mapper.readValue(contentJson, Content.class);
+                Content<T> content = mapper.readValue(contentJson, typeRef);
                 content.setId(hit.getId());
                 validContent.add(content);
             } catch (Exception e) {
                 logger.error("JsonParse Exception, {}", contentJson, e);
             }
-            logger.debug("Hit:{}", contentJson);
         });
         return validContent;
     }
 
     @Override
-    public Collection<TagCloudItem> getTagCloud() {
-        Set<TagCloudItem> tagCloud = new LinkedHashSet<>();
-        SearchResponse response = client.prepareSearch(config.getString(INDEX_NAME))
-                .setTypes(config.getString(TYPE_NAME))
-                .addAggregation(new TermsBuilder("TAG_COUNT").field("target.tags")).execute().actionGet();
-        Terms agg = response.getAggregations().get("TAG_COUNT");
-        Collection<Terms.Bucket> buckets = agg.getBuckets();
-        for (Terms.Bucket bucket : buckets) {
-            tagCloud.add(new TagCloudItem(bucket.getKey(), bucket.getDocCount()));
+    public Collection<Content<T>> search(Collection<String> tags, Boolean activeOnly) {
+        BoolFilterBuilder boolFilter = FilterBuilders.boolFilter();
+        if (activeOnly) {
+            Date now = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
+            boolFilter = boolFilter.must(FilterBuilders.rangeFilter("startDate").lte(now),
+                    FilterBuilders.rangeFilter("endDate").gte(now));
         }
-        return tagCloud;
+
+        if (tags != null && !tags.isEmpty()) {
+            boolFilter = boolFilter.should(FilterBuilders.termsFilter("target.tags", tags).execution("and"));
+        }
+        return doSearch(boolFilter, null, config.getInt(PAGE_SIZE), 0);
+    }
+
+    @Override
+    public Collection<Content<TagCloudItem>> tagCloud(List<String> tags, boolean activeOnly) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

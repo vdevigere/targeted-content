@@ -17,9 +17,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viddu.content.bo.Content;
+import com.viddu.content.bo.ContentData;
 import com.viddu.content.bo.ContentDb;
 
 @Path("/content")
@@ -29,10 +31,14 @@ public class ContentResource {
     private ObjectMapper mapper;
 
     @Inject
-    private ContentDb contentDAO;
+    private ContentDb<ContentData> contentDAO;
+
+    private TypeReference<Content<ContentData>> typeRef = new TypeReference<Content<ContentData>>() {
+    };
 
     /**
      * CREATE
+     *
      * @param contentJson
      * @return
      * @throws JsonParseException
@@ -42,25 +48,27 @@ public class ContentResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public String create(String contentJson) throws JsonParseException, JsonMappingException, IOException {
-        Content content = mapper.readValue(contentJson, Content.class);
+        Content<ContentData> content = mapper.readValue(contentJson, typeRef);
         String savedId = contentDAO.saveUpdate(content, null);
         return savedId;
     }
 
     /**
      * READ
+     *
      * @param contentId
      * @return
      */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Content read(@PathParam("id") String contentId) {
+    public Content<ContentData> read(@PathParam("id") String contentId) {
         return contentDAO.findContentById(contentId);
     }
 
     /**
      * UPDATE
+     *
      * @param contentJson
      * @param id
      * @return
@@ -73,13 +81,14 @@ public class ContentResource {
     @Path("/{id}")
     public String update(String contentJson, @PathParam("id") String id) throws JsonParseException,
             JsonMappingException, IOException {
-        Content content = mapper.readValue(contentJson, Content.class);
+        Content<ContentData> content = mapper.readValue(contentJson, typeRef);
         String savedId = contentDAO.saveUpdate(content, id);
         return savedId;
     }
 
     /**
      * DELETE
+     *
      * @param id
      * @return
      */
@@ -93,17 +102,15 @@ public class ContentResource {
 
     /**
      * READ ALL
+     *
      * @param tags
      * @param activeOnly
      * @return
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Collection<Content> getByTag(@QueryParam("tags[]") List<String> tags,
+    public Collection<Content<ContentData>> getByTag(@QueryParam("tags[]") List<String> tags,
             @QueryParam("activeOnly") boolean activeOnly) {
-        if (activeOnly) {
-            return contentDAO.filterActiveContent(tags);
-        }
-        return contentDAO.findAllContent(tags);
+        return contentDAO.search(tags, activeOnly);
     }
 }

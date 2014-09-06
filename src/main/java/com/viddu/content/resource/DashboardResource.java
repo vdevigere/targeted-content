@@ -39,7 +39,7 @@ public class DashboardResource {
     Map<String, Object> pageModel;
 
     @Inject
-    private ContentDb contentDAO;
+    private ContentDb<ContentData> contentDAO;
 
     @Inject
     private ObjectMapper mapper;
@@ -54,7 +54,7 @@ public class DashboardResource {
     @GET
     @Path("/search.html")
     public ModelView search() throws JsonProcessingException {
-        Collection<Content> allContent = contentDAO.findAllContent(null);
+        Collection<Content<ContentData>> allContent = contentDAO.search(null, false);
         pageModel.put("initialContent", mapper.writeValueAsString(allContent));
         ModelView modelView = new ModelView("content.search", pageModel);
         return modelView;
@@ -70,7 +70,7 @@ public class DashboardResource {
     @GET
     @Path("/edit.html")
     public ModelView viewUpdate(@QueryParam("id") String id) {
-        Content content = contentDAO.findContentById(id);
+        Content<ContentData> content = contentDAO.findContentById(id);
         pageModel.put("content", content);
         ModelView modelView = new ModelView("content.new", pageModel);
         return modelView;
@@ -79,8 +79,9 @@ public class DashboardResource {
     @GET
     @Path("/delete.html")
     public ModelView deleteContent(@QueryParam("id") String id) {
-         boolean deleteSuccessful = contentDAO.deleteContentById(id);
-         DashboardResponse<String> deleteStatus = (deleteSuccessful) ? new DashboardResponse<String>(DashboardResponse.Type.SUCCESS, "Deleted Successfully", id) : new DashboardResponse<String>(
+        boolean deleteSuccessful = contentDAO.deleteContentById(id);
+        DashboardResponse<String> deleteStatus = (deleteSuccessful) ? new DashboardResponse<String>(
+                DashboardResponse.Type.SUCCESS, "Deleted Successfully", id) : new DashboardResponse<String>(
                 DashboardResponse.Type.WARNING, "Could not find record", id);
         pageModel.put("status", deleteStatus);
         ModelView modelView = new ModelView("content.delete", pageModel);
@@ -98,7 +99,7 @@ public class DashboardResource {
         Date sDate = sdf.parse(formParams.getFirst("start-date"));
         Date eDate = sdf.parse(formParams.getFirst("end-date"));
         Collection<String> tags = formParams.get("tags");
-        Content content = new Content(name, sDate, eDate);
+        Content<ContentData> content = new Content<ContentData>(name, sDate, eDate);
         if (dataList != null && !dataList.isEmpty()) {
             IntStream.range(0, dataList.size()).parallel().forEach(index -> {
                 String data = dataList.get(index);
@@ -114,7 +115,8 @@ public class DashboardResource {
         // Return back to Edit page
         pageModel.put("content", content);
         content.setId(id);
-        DashboardResponse<String> saveStatus = new DashboardResponse<String>(DashboardResponse.Type.SUCCESS, "Saved Successfully", id);
+        DashboardResponse<String> saveStatus = new DashboardResponse<String>(DashboardResponse.Type.SUCCESS,
+                "Saved Successfully", id);
         pageModel.put("status", saveStatus);
         ModelView modelView = new ModelView("content.new", pageModel);
         return modelView;
