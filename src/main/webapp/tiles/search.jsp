@@ -7,7 +7,7 @@
 	var initialContent =${initialContent };
 </script>
 <div class="row">
-	<div class="col-sm-2" ></div>
+	<div class="col-sm-2"></div>
 	<div class="col-sm-8" id="searchForm">
 		<form class="form-horizontal row" role="form">
 			<div class="col-sm-12">
@@ -24,7 +24,7 @@
 	<div class="col-sm-2"></div>
 </div>
 <div class="row">
-	<div class="col-sm-2"  id="tagCloud"></div>
+	<div class="col-sm-2" id="tagCloud"></div>
 	<div class="col-sm-8" id="contentGrid"></div>
 	<div class="col-sm-2"></div>
 </div>

@@ -22,7 +22,6 @@ public class ElasticSearchConnectionManager implements ServletContextListener {
     private Config config;
 
     private Node node;
-    private Client client;
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticSearchConnectionManager.class);
 
@@ -30,7 +29,7 @@ public class ElasticSearchConnectionManager implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         logger.debug("Starting ElasticSearch node..");
         node = nodeBuilder().node();
-        client = node.client();
+        Client client = node.client();
         ServletContext context = sce.getServletContext();
         context.setAttribute(config.getString(CLIENT_NAME), client);
     }

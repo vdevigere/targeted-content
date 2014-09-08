@@ -123,8 +123,7 @@ public class ElasticSearchDb<T> implements ContentDb<T> {
     @Override
     public Collection<Content<T>> search(Collection<String> tags, Boolean activeOnly, Integer size, Integer from) {
         BaseFilterBuilder filter = buildFilter(tags, activeOnly);
-        SearchRequestBuilder searchRequest = client.prepareSearch(config.getString(INDEX_NAME)).setTypes(
-                config.getString(TYPE_NAME));
+        SearchRequestBuilder searchRequest = getSearchRequestBuilder();
         searchRequest.setPostFilter(filter).setFrom(from).setSize(size);
         logger.debug("Search Request={}", searchRequest);
 
@@ -137,8 +136,7 @@ public class ElasticSearchDb<T> implements ContentDb<T> {
     @Override
     public Collection<Content<T>> search(Collection<String> tags, Boolean activeOnly) {
         BaseFilterBuilder filter = buildFilter(tags, activeOnly);
-        SearchRequestBuilder searchRequest = client.prepareSearch(config.getString(INDEX_NAME)).setTypes(
-                config.getString(TYPE_NAME));
+        SearchRequestBuilder searchRequest = getSearchRequestBuilder();
         searchRequest.setPostFilter(filter).setScroll(TimeValue.timeValueMinutes(1L)).setSearchType(SearchType.SCAN);
         logger.debug("Search Request={}", searchRequest);
         // Execute Search
@@ -164,12 +162,11 @@ public class ElasticSearchDb<T> implements ContentDb<T> {
 
         // Build Aggregation
         FilterAggregationBuilder filterAggregation = new FilterAggregationBuilder("FILTERED_AGG").filter(filter)
-                .subAggregation(new TermsBuilder("TAG_COUNT").field("target.tags"));
+                .subAggregation(new TermsBuilder("TAG_COUNT").field("target.tags").size(0));
 
         List<TagCloudItem> tagCloud = new LinkedList<TagCloudItem>();
 
-        SearchRequestBuilder searchRequest = client.prepareSearch(config.getString(INDEX_NAME)).setTypes(
-                config.getString(TYPE_NAME));
+        SearchRequestBuilder searchRequest = getSearchRequestBuilder();
 
         searchRequest.addAggregation(filterAggregation).setSearchType(SearchType.COUNT);
         logger.debug("Search Request={}", searchRequest);
@@ -184,6 +181,12 @@ public class ElasticSearchDb<T> implements ContentDb<T> {
             tagCloud.add(new TagCloudItem(bucket.getKey(), bucket.getDocCount()));
         });
         return tagCloud;
+    }
+
+    private SearchRequestBuilder getSearchRequestBuilder() {
+        SearchRequestBuilder searchRequest = client.prepareSearch(config.getString(INDEX_NAME)).setTypes(
+                config.getString(TYPE_NAME));
+        return searchRequest;
     }
 
     private BaseFilterBuilder buildFilter(Collection<String> tags, boolean activeOnly) {

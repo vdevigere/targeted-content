@@ -66,7 +66,7 @@ var contentModule = (function(module) {
 			console.log($(e.currentTarget).data('tag'));
 		},
 
-		initialize : function() {
+		initialize : function(options) {
 			this.listenTo(this.collection, "reset", this.render);
 			this.listenTo(this.collection, "change", this.render);
 			this.listenTo(this.collection, "add", this.render);
