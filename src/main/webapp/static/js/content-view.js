@@ -25,10 +25,11 @@ var contentModule = (function(module) {
 	});
 
 	SearchForm = Backbone.View.extend({
-		el : '#searchForm',
+		el : $('.searchForm'),
 		events : {
 			'click #validOnly' : 'resetCollection', // Valid Only Checkbox
 			'change .tags' : 'resetCollection', // Tag input box
+			'click .tagCloudLink' : 'tagCloudLink',
 		},
 
 		initialize : function(options) {
@@ -55,17 +56,15 @@ var contentModule = (function(module) {
 			});
 		},
 
+		tagCloudLink : function(e){
+			var tag = $(e.currentTarget).data('tag');
+			var inputVal = this.$el.find('.tags');
+			inputVal.tagit("createTag", tag);
+		}
+
 	});
 
 	TagCloudView = Backbone.View.extend({
-		events : {
-			'click a' : 'filterByTag'
-		},
-
-		filterByTag : function(e) {
-			console.log($(e.currentTarget).data('tag'));
-		},
-
 		initialize : function(options) {
 			this.listenTo(this.collection, "reset", this.render);
 			this.listenTo(this.collection, "change", this.render);
@@ -73,10 +72,9 @@ var contentModule = (function(module) {
 		},
 
 		render : function() {
-			console.log('rendering tag cloud');
 			var tagList = '<div id="tags"><ul>';
 			this.collection.each(function(val) {
-				tagList += '<li><a href="#" data-weight="'
+				tagList += '<li><a href="javascript:void(0);" class="tagCloudLink" data-weight="'
 						+ val.attributes.weight + '" data-tag="'
 						+ val.attributes.name + '">' + val.attributes.name
 						+ ' (' + val.attributes.weight + ')</a></li>';
