@@ -39,7 +39,7 @@ public class DashboardResource {
     Map<String, Object> pageModel;
 
     @Inject
-    private ContentDb<ContentData> contentDAO;
+    private ContentDb<String> contentDAO;
 
     @Inject
     private ObjectMapper mapper;
@@ -54,7 +54,7 @@ public class DashboardResource {
     @GET
     @Path("/search.html")
     public ModelView search() throws JsonProcessingException {
-        Collection<Content<ContentData>> allContent = contentDAO.search(null, false);
+        Collection<Content<String>> allContent = contentDAO.search(null, false);
         pageModel.put("initialContent", mapper.writeValueAsString(allContent));
         ModelView modelView = new ModelView("content.search", pageModel);
         return modelView;
@@ -70,7 +70,7 @@ public class DashboardResource {
     @GET
     @Path("/edit.html")
     public ModelView viewUpdate(@QueryParam("id") String id) {
-        Content<ContentData> content = contentDAO.findContentById(id);
+        Content<String> content = contentDAO.findContentById(id);
         pageModel.put("content", content);
         ModelView modelView = new ModelView("content.new", pageModel);
         return modelView;
@@ -99,12 +99,12 @@ public class DashboardResource {
         Date sDate = sdf.parse(formParams.getFirst("start-date"));
         Date eDate = sdf.parse(formParams.getFirst("end-date"));
         Collection<String> tags = formParams.get("tags");
-        Content<ContentData> content = new Content<ContentData>(name, sDate, eDate);
+        Content<String> content = new Content<String>(name, sDate, eDate);
         if (dataList != null && !dataList.isEmpty()) {
             IntStream.range(0, dataList.size()).parallel().forEach(index -> {
                 String data = dataList.get(index);
                 Integer weight = Integer.parseInt(weightList.get(index));
-                ContentData contentData = new ContentData(data, weight);
+                ContentData<String> contentData = new ContentData<>(data, weight);
                 content.addContentData(contentData);
             });
         }

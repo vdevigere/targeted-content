@@ -31,9 +31,9 @@ public class ContentResource {
     private ObjectMapper mapper;
 
     @Inject
-    private ContentDb<ContentData> contentDAO;
+    private ContentDb<String> contentDAO;
 
-    private TypeReference<Content<ContentData>> typeRef = new TypeReference<Content<ContentData>>() {
+    private TypeReference<Content<String>> typeRef = new TypeReference<Content<String>>() {
     };
 
     /**
@@ -48,7 +48,7 @@ public class ContentResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public String create(String contentJson) throws JsonParseException, JsonMappingException, IOException {
-        Content<ContentData> content = mapper.readValue(contentJson, typeRef);
+        Content<String> content = mapper.readValue(contentJson, typeRef);
         String savedId = contentDAO.saveUpdate(content, null);
         return savedId;
     }
@@ -62,7 +62,7 @@ public class ContentResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Content<ContentData> read(@PathParam("id") String contentId) {
+    public Content<String> read(@PathParam("id") String contentId) {
         return contentDAO.findContentById(contentId);
     }
 
@@ -81,7 +81,7 @@ public class ContentResource {
     @Path("/{id}")
     public String update(String contentJson, @PathParam("id") String id) throws JsonParseException,
             JsonMappingException, IOException {
-        Content<ContentData> content = mapper.readValue(contentJson, typeRef);
+        Content<String> content = mapper.readValue(contentJson, typeRef);
         String savedId = contentDAO.saveUpdate(content, id);
         return savedId;
     }
@@ -109,7 +109,7 @@ public class ContentResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Collection<Content<ContentData>> getByTag(@QueryParam("tags[]") List<String> tags,
+    public Collection<Content<String>> getByTag(@QueryParam("tags[]") List<String> tags,
             @QueryParam("activeOnly") boolean activeOnly) {
         return contentDAO.search(tags, activeOnly);
     }

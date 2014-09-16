@@ -1,11 +1,11 @@
 package com.viddu.content.bo;
 
-public class ContentData {
-    private String data;
+public class ContentData<T> {
+    private T data;
 
     private Integer weight;
 
-    public ContentData(String data, Integer weight) {
+    public ContentData(T data, Integer weight) {
         this.data = data;
         this.weight = weight;
     }
@@ -14,7 +14,7 @@ public class ContentData {
         // TODO Auto-generated constructor stub
     }
 
-    public String getData() {
+    public T getData() {
         return data;
     }
 
@@ -22,7 +22,7 @@ public class ContentData {
         return weight;
     }
 
-    public void setData(String data) {
+    public void setData(T data) {
         this.data = data;
     }
 

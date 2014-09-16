@@ -18,7 +18,7 @@ public class Content<T> {
 
     private final Map<String, Collection<String>> target;
 
-    private final Set<T> contentDataSet;
+    private final Set<ContentData<T>> contentDataSet;
 
     private final Date startDate, endDate;
 
@@ -45,7 +45,7 @@ public class Content<T> {
         return target;
     }
 
-    public void addContentData(T contentData) {
+    public void addContentData(ContentData<T> contentData) {
         contentDataSet.add(contentData);
     }
 
@@ -58,7 +58,7 @@ public class Content<T> {
         return target.get("tags");
     }
 
-    public Set<T> getContentDataSet() {
+    public Set<ContentData<T>> getContentDataSet() {
         return contentDataSet;
     }
 
