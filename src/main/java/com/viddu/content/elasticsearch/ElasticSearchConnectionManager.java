@@ -24,7 +24,6 @@ import com.typesafe.config.Config;
 
 @WebListener
 public class ElasticSearchConnectionManager implements ServletContextListener {
-    private static final String CLIENT_NAME = "CLIENT_NAME";
     @Inject
     private Config config;
 
@@ -38,7 +37,7 @@ public class ElasticSearchConnectionManager implements ServletContextListener {
         node = nodeBuilder().node();
         Client client = node.client();
         ServletContext context = sce.getServletContext();
-        context.setAttribute(config.getString(CLIENT_NAME), client);
+        context.setAttribute("esClient", client);
         try {
             createIndexIfNoneExists(client);
         } catch (ElasticsearchException | InterruptedException | ExecutionException e) {

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
 
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
@@ -58,8 +59,8 @@ public class ElasticSearchDb<T> implements ContentDb<T> {
     };
 
     @Inject
-    public ElasticSearchDb(Client client) {
-        this.client = client;
+    public ElasticSearchDb(ServletContext context) {
+        this.client = (Client) context.getAttribute("esClient");
     }
 
     @Override

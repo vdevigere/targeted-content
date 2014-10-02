@@ -21,7 +21,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viddu.content.bo.Content;
-import com.viddu.content.bo.ContentData;
 import com.viddu.content.bo.ContentDb;
 
 @Path("/content")
