@@ -29,7 +29,7 @@
 		</div>
 	</div>
 </script>
-<form class="form-horizontal" role="form" action="save.html" method="post">
+<form class="form-horizontal" role="form" action="page/dashboard/save.html" method="post">
 	<div class="container">
 		<!-- START: CONTENT -->
 		<div class="form-group">

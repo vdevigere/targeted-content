@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <html lang="en">
 <head>
+<c:set var="url">${pageContext.request.requestURL}</c:set>
+<base href="${fn:substring(url, 0, fn:length(url) - fn:length(pageContext.request.requestURI))}${pageContext.request.contextPath}/" />
+
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,7 +18,7 @@
 <!-- Bootstrap core CSS -->
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.11.0/themes/flick/jquery-ui.css">
-<link href="/static/targeted-content/css/simple.css" rel="stylesheet">
+<link href="static/css/simple.css" rel="stylesheet">
 <link href="/static/tag-it/css/jquery.tagit.css" rel="stylesheet">
 <link href="/static/backgrid/lib/backgrid.min.css" rel="stylesheet">
 <link href="/static/backgrid/backgrid-paginator/backgrid-paginator.min.css" rel="stylesheet">
@@ -43,12 +49,12 @@
 	<script type="text/javascript" src="/static/backgrid/lib/backgrid.min.js"></script>
 	<script type="text/javascript" src="/static/backgrid/backgrid-paginator/backgrid-paginator.min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.4/handlebars.min.js"></script>
-	<script type="text/javascript" src="/static/targeted-content/js/handlebars-helpers.js"></script>	
+	<script type="text/javascript" src="static/js/handlebars-helpers.js"></script>	
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
 	<script type="text/javascript" src="/static/tagCanvas/jquery.tagcanvas.min.js"></script>
-	<script type="text/javascript" src="/static/targeted-content/js/targeted-content.js"></script>
-	<script type="text/javascript" src="/static/targeted-content/js/content-route.js"></script>
-	<script type="text/javascript" src="/static/targeted-content/js/content-model.js"></script>
-	<script type="text/javascript" src="/static/targeted-content/js/content-view.js"></script>
+	<script type="text/javascript" src="static/js/targeted-content.js"></script>
+	<script type="text/javascript" src="static/js/content-route.js"></script>
+	<script type="text/javascript" src="static/js/content-model.js"></script>
+	<script type="text/javascript" src="static/js/content-view.js"></script>
 </body>
 </html>

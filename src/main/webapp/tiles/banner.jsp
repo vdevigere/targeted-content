@@ -8,14 +8,13 @@
 					class="icon-bar"></span> <span class="icon-bar"></span> <span
 					class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="home.html">${project.name}</a>
+			<a class="navbar-brand" href="page/dashboard/home.html">${project.name}</a>
 		</div>
 		<div class="collapse navbar-collapse">
 			<ul class="nav navbar-nav">
 				<c:forEach var="menuItem" items="${topMenu }">
-					<li class="${menuItem.active }"><a href="${menuItem.link}">${menuItem.name }</a></li>
+					<li class="${menuItem.active }"><a href='page/dashboard/${menuItem.link}'>${menuItem.name }</a></li>
 				</c:forEach>
-				<li><a href="#contact">Contact</a></li>
 			</ul>
 		</div>
 		<!--/.nav-collapse -->

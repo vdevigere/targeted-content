@@ -32,6 +32,7 @@ public class CdiApplicationConfig {
         List<MenuItem> topMenuItems = new LinkedList<MenuItem>();
         topMenuItems.add(new MenuItem("Add New", "new.html"));
         topMenuItems.add(new MenuItem("Search", "search.html"));
+        topMenuItems.add(new MenuItem("Contact", "contact.html"));
         return topMenuItems;
     }
 
