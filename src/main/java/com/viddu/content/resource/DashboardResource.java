@@ -23,8 +23,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viddu.content.PageModel;
 import com.viddu.content.bo.Content;
-import com.viddu.content.bo.ContentDb;
 import com.viddu.content.bo.ContentData;
+import com.viddu.content.bo.ContentDb;
 import com.viddu.content.bo.DashboardResponse;
 import com.viddu.content.tiles.ModelView;
 
@@ -51,6 +51,7 @@ public class DashboardResource {
         return modelView;
     }
 
+    @SecuredBy
     @GET
     @Path("/search.html")
     public ModelView search() throws JsonProcessingException {
