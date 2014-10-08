@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -30,6 +32,7 @@ import com.viddu.content.tiles.ModelView;
 
 @Path("/dashboard")
 @Produces(MediaType.TEXT_HTML)
+@PermitAll
 public class DashboardResource {
 
     private static final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -51,7 +54,7 @@ public class DashboardResource {
         return modelView;
     }
 
-    @SecuredBy
+    @RolesAllowed("LOGGED_IN")
     @GET
     @Path("/search.html")
     public ModelView search() throws JsonProcessingException {

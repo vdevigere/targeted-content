@@ -55,7 +55,7 @@ public class SecuredByFilter implements ContainerRequestFilter {
                 String redirect_url = queryParams.getFirst("state");
                 UserInfo userInfo = fetchUserInfo(code, redirect_url);
                 if (userInfo != null) {
-                    session.setAttribute("USERNAME", userInfo.getUsername());
+                    session.setAttribute("USERNAME", userInfo.getEmail());
                 } else {
                     requestContext.abortWith(Response.status(Response.Status.FORBIDDEN).build());
                 }
@@ -97,7 +97,7 @@ public class SecuredByFilter implements ContainerRequestFilter {
 
     private UserInfo fetchUserInfo(String code, String currentURI) {
         // TODO Make a call to Facebook API and get user details
-        return new UserInfo("vdevigere", "vdevigere@yahoo.com");
+        return new UserInfo("1","vdevigere@yahoo.com", "Viddu", "male","Devigere","");
     }
 
     private boolean isAuthorized(String username) {

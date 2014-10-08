@@ -4,6 +4,14 @@
 	<listener>
 		<listener-class>org.apache.tiles.extras.complete.CompleteAutoloadTilesListener</listener-class>
 	</listener>
+	<filter>
+		<filter-name>FacebookOAuth</filter-name>
+		<filter-class>com.viddu.content.security.FacebookOAuthFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>FacebookOAuth</filter-name>
+		<url-pattern>/page/dashboard/search.html</url-pattern>
+	</filter-mapping>
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>
 		<url-pattern>/page/dashboard/static/*</url-pattern>
