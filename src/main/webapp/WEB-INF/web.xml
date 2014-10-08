@@ -12,6 +12,10 @@
 		<filter-name>FacebookOAuth</filter-name>
 		<url-pattern>/page/dashboard/search.html</url-pattern>
 	</filter-mapping>
+	<context-param>
+		<param-name>oauth.provider.provider-class</param-name>
+		<param-value>org.jboss.resteasy.auth.oauth.OAuthMemoryProvider</param-value>
+	</context-param>
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>
 		<url-pattern>/page/dashboard/static/*</url-pattern>

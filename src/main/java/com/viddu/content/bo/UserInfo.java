@@ -11,6 +11,7 @@ public class UserInfo {
     private final String gender;
     private final String last_name;
     private final String link;
+    private String role;
 
     public UserInfo(@JsonProperty("id") String id, @JsonProperty("email") String email,
             @JsonProperty("first_name") String first_name, @JsonProperty("gender") String gender,
@@ -46,6 +47,15 @@ public class UserInfo {
 
     public String getLink() {
         return link;
+    }
+
+    public String getRole() {
+        // TODO Auto-generated method stub
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
 }

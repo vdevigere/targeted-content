@@ -30,6 +30,7 @@ import com.viddu.content.bo.UserInfo;
 
 public class FacebookOAuthFilter implements Filter {
 
+    private static final String USER_INFO = "USER_INFO";
     private static final String PROTECTED_RESOURCE_URL = "https://graph.facebook.com/me";
     private static final String ACCESS_TOKEN = "ACCESS_TOKEN";
     private static final Token EMPTY_TOKEN = null;
@@ -70,8 +71,11 @@ public class FacebookOAuthFilter implements Filter {
                     String userDetails = fbResponse.getBody();
                     logger.debug("User Details={}", userDetails);
                     UserInfo userInfo = mapper.readValue(userDetails, UserInfo.class);
+                    userInfo.setRole("LOGGED_IN");
+                    session.setAttribute(USER_INFO, userInfo);
+                    HttpServletRequest wrappedReq = new FbHttpServletRequest(webRequest, userInfo);
                     // Continue Chain
-                    chain.doFilter(request, response);
+                    chain.doFilter(wrappedReq, response);
                 }else{
                     logger.error("Error Fetching User Information");
                     webResponse.sendError(403, "Unable to Authorize");
@@ -82,11 +86,10 @@ public class FacebookOAuthFilter implements Filter {
                 webResponse.sendRedirect(fbAuthUrl);
             }
         }else{
-            //Already Authenticated..
-
-            //Fetch user Information and add to Request
-
-            chain.doFilter(request, response);
+            UserInfo userInfo = (UserInfo) session.getAttribute(USER_INFO);
+            HttpServletRequest wrappedReq = new FbHttpServletRequest(webRequest, userInfo);
+            // Continue Chain
+            chain.doFilter(wrappedReq, response);
         }
 
     }
