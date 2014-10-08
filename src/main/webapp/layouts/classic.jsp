@@ -5,9 +5,6 @@
 
 <html lang="en">
 <head>
-<c:set var="url">${pageContext.request.requestURL}</c:set>
-<base href="${fn:substring(url, 0, fn:length(url) - fn:length(pageContext.request.requestURI))}${pageContext.request.contextPath}/page/dashboard/" />
-
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
